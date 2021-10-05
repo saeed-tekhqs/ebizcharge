@@ -1,0 +1,19 @@
+<?xml version="1.0"?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Cron:etc/crontab.xsd">
+  <group id="ebiz_recurring_order">
+    <job name="ebiz_order_create" instance="Ebizcharge\Ebizcharge\Cron\CreateOrder" method="execute">
+	  <schedule>*/2 * * * *</schedule>
+    </job>
+  </group>
+  <group id="ebiz_check_item_stock">
+    <job name="ebiz_item_stock_check" instance="Ebizcharge\Ebizcharge\Cron\CheckItemStock" method="execute">
+      <schedule>*/50 * * * *</schedule>
+    </job>
+  </group>
+	<!--<group id="ebiz_check_transaction_status">
+    <job name="ebiz_transaction_check" instance="Ebizcharge\Ebizcharge\Cron\SuspendRecurring" method="execute">
+      <schedule>30 1 * * *</schedule>
+	  &lt;!&ndash;<schedule>*/4 * * * *</schedule>&ndash;&gt;
+    </job>
+  </group>-->
+</config>

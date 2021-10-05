@@ -1,0 +1,168 @@
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+
+//
+//  Common
+//  ---------------------------------------------
+
+& when (@media-common = true) {
+
+    /* Tooltip container */
+    .tooltip {
+        position: relative;
+        display: inline-block;
+        border-bottom: 1px dotted black;
+        /* If you want dots under the hoverable text */
+    }
+
+    /* Tooltip text */
+
+    .tooltip .tooltiptext {
+        visibility: hidden;
+        width: 120px;
+        background-color: #555;
+        color: #fff;
+        text-align: center;
+        padding: 5px 0;
+        border-radius: 6px;
+        /* Position the tooltip text */
+        position: absolute;
+        z-index: 1;
+        bottom: 125%;
+        left: 50%;
+        margin-left: -60px;
+        /* Fade in tooltip */
+        opacity: 0;
+        transition: opacity 0.3s;
+    }
+
+    /* Tooltip arrow */
+
+    .tooltip .tooltiptext::after {
+        content: "";
+        position: absolute;
+        top: 100%;
+        left: 50%;
+        margin-left: -5px;
+        border-width: 5px;
+        border-style: solid;
+        border-color: #555 transparent transparent transparent;
+    }
+
+    /* Show the tooltip text when you mouse over the tooltip container */
+
+    .tooltip:hover .tooltiptext {
+        visibility: visible;
+        opacity: 1;
+    }
+
+    .account .table-wrapper {
+        overflow-x: visible;
+    }
+
+    .searchTabCustom{
+        width: 65%;
+        float: left;
+
+    }
+    .searchTabCustom li{
+        cursor: pointer;
+
+
+    }
+    .searchDelCustom{
+        width: 34%;
+        float: right;
+
+    }
+    .dot_green {
+        height: 8px;
+        width: 8px;
+        background-color: #089D2C;
+        border-radius: 50%;
+        display: inline-block;
+        margin: 0px 5px;
+    }
+    .searchRowDelCustom{
+        width: 30%;
+        float: left;
+
+    }
+    .dot_red {
+        height: 8px;
+        width: 8px;
+        background-color: #F30C10;
+        border-radius: 50%;
+        display: inline-block;
+        margin: 0px 5px;
+    }
+    .clearAll {
+        clear: both;
+        margin-top:20px;
+
+    }
+    .tablinks {
+        all: initial;
+        background-image: none;
+        background: #fff;
+        color: #333;
+        cursor: pointer;
+        display: inline-block;
+        font-family: 'Open Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+        font-weight: 600;
+        margin: 0;
+        padding: 7px 15px;
+        font-size: 1.4rem;
+        line-height: 1.6rem;
+        box-sizing: border-box;
+        vertical-align: middle;
+        pointer-events: none;
+        cursor: pointer;
+        border-bottom: 4px solid #f00;
+
+    }
+    .tablink:hover {
+        background-color: #777;
+    }
+
+    .tablinksNotSelect {
+        all: initial;
+        background-image: none;
+        background: #fff;
+        color: #555;
+        border: 0px;
+        cursor: pointer;
+        display: inline-block;
+        font-family: 'Open Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+        font-weight: 600;
+        margin: 0;
+        padding: 7px 15px;
+        font-size: 1.4rem;
+        line-height: 1.6rem;
+        box-sizing: border-box;
+        vertical-align: middle;
+        border-bottom: 4px solid transparent;
+    }
+
+    .tablinksNotSelect:hover {
+        border: 0px;
+        background-image: none;
+        background: #fff;
+        color: #333;
+        display: inline-block;
+        font-family: 'Open Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+        font-weight: 600;
+        margin: 0;
+        padding: 7px 15px;
+        font-size: 1.4rem;
+        line-height: 1.6rem;
+        box-sizing: border-box;
+        vertical-align: middle;
+        border-bottom: 4px solid #f00;
+    }
+    ul, ol{ margin: 0px; padding:0px;  cursor: pointer;}
+
+
+}

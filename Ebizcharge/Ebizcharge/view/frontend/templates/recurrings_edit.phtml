@@ -1,0 +1,383 @@
+<?php
+/**
+ * Displays a form to edit the credit card information
+ * for the selected saved payment method.
+ *
+ * @author      Century Business Solutions <support@centurybizsolutions.com>
+ * @copyright   Copyright (c) 2020 Century Business Solutions  (www.centurybizsolutions.com)
+ */
+
+$_code = 'payment';
+$requestCC = $block->getRequestCardCode();
+
+$payment = $block->getSearchScheduledRecurringPayments();
+
+$profiles = $block->getPaymentMethods();
+
+$recurring = $block->getCustomerRecurring();
+
+$item = "";
+$recurringId = "";
+$recindefinitely = "";
+if (!empty($recurring)) {
+    $recindefinitely = $recurring['rec_indefinitely'];
+    $qty = $recurring['qty_ordered'];
+    $item = $recurring['mage_item_name'];
+    $recurringId = $recurring['rec_id'];
+    $itemId = $recurring['mage_item_id'];
+    $recurringPaymentMethodId = $recurring['eb_rec_method_id'];
+
+    $startRaw = $recurring['eb_rec_start_date'];
+    $expireRaw = $recurring['eb_rec_end_date'];
+    $start = date("Y-m-d", strtotime($startRaw));
+    $expire = date("Y-m-d", strtotime($expireRaw));
+    // for subscription shipping address
+    $orderId = $recurring['mage_order_id'];
+    $shippingAddressId = $recurring['shipping_address_id'];
+
+} else {
+    $itemId = 0;
+    $recurringPaymentMethodId = 0;
+    $item = "";
+    $qty = 0;
+    $start = "";
+    $expire = "";
+    // for subscription shipping address
+    $orderId = 0;
+    $shippingAddressId = 0;
+}
+
+$product = $block->getProduct((int)$itemId);
+$name = $product->getName(); //Get Product Name
+$productPriceById = (!empty($product->getSpecialPrice())) ? $product->getSpecialPrice() : $product->getPrice();
+
+$productImages = $product->getMediaGalleryImages();
+if (!empty($productImages)) {
+    foreach ($productImages as $productimage) {
+        $img = "<img src = " . $productimage['url'] . " height=100 width=100 />";
+        break;
+    }
+} else {
+    $img = "<img src = 'image.png' height=100 width=100 />";
+}
+
+// for subscription shipping address
+$shippingAddress = $block->getCustomerShippingAddress($orderId, $shippingAddressId);
+
+if ($qty == 0)
+    $qty = 1;
+?>
+<form class="" action="<?php /* @escapeNotVerified */
+echo $block->getUrl('ebizcharge/recurrings/updateaction', ['_secure' => true]); ?>" method="post" id="form-validate"
+      name="form-validate" enctype="multipart/form-data" data-hasrequired="<?php /* @escapeNotVerified */
+echo __('* Required Fields'); ?>">
+    <div style="width: 100%">
+        <?php if ($payment->ScheduleStatus == 1) { ?>
+            <div class="msgUnsub">
+                <p>This subscription has been unsubscribed.</p>
+            </div>
+        <?php } else if ($payment->ScheduleStatus == 3) { ?>
+            <div class="msgUnsub">
+                <p>This subscription has been suspended.</p>
+            </div>
+        <?php } ?>
+
+        <table>
+            <tr>
+                <td><strong>Item Information</strong></td>
+                <td><strong>Price</strong></td>
+                <td><strong>Qty</strong></td>
+                <td><strong>Subtotal</strong></td>
+            </tr>
+            <tr>
+                <td>
+                    <p class="left"><?php echo $img; ?></p>
+                    <p class="left"><strong><?php echo $item; ?></strong></p>
+                </td>
+                <td><?php echo number_format($productPriceById, 2); ?></td>
+                <td><input type="text" style="width: 50px;" name="qty" value="<?php echo $qty; ?>" maxlength="3"></td>
+                <td><?php echo number_format($productPriceById * $qty, 2); ?></td>
+            </tr>
+        </table>
+        <?php //} ?>
+        <hr>
+    </div>
+    <div style="width:100%; display: inline-block;">
+        <div class="leftdiv">
+            <?php echo $block->getBlockHtml('formkey'); ?>
+            <input type="hidden" name="eb_rec_method_id" value="<?php echo $recurringPaymentMethodId ?>"/>
+            <input type="hidden" name="cid" value="<?php echo $block->getEbzcCustId(); ?>"/>
+            <input type="hidden" name="mid" value="<?php echo $block->getEbzcMethodId(); ?>"/>
+            <input type="hidden" name="mageCustId" value="<?php echo $block->getMageCustId(); ?>"/>
+            <input type="hidden" name="custIntId" value="<?php echo $block->getEbzcCustInternalId(); ?>"/>
+            <input type="hidden" name="amount" value="<?php echo $productPriceById; ?>"/>
+            <input type="hidden" name="schedulename" value="<?php echo $payment->ScheduleName; ?>"/>
+            <input type="hidden" name="receiptnote" value="<?php echo $payment->ReceiptNote; ?>"/>
+            <input type="hidden" name="payment_method_name" id="payment_method_name"/>
+
+            <fieldset class="fieldset items background">
+                <div id="Frecheck" style="color: red;"></div>
+
+                <div class="field required">
+                    <div class="fields group group-2">
+                        <table>
+                            <tr>
+                                <td class="tdfreq">Frequency</td>
+                                <td>
+									<select name="schedule" class="selectdiv" id="selectdiv" data-validate="{required:true}">
+                                        <option disabled>Please select frequency</option>
+                                        <?php
+                                            $paymentSchedule = isset($payment->Schedule) ? $payment->Schedule : '';
+                                            $block->getConfiguredFrequencies($paymentSchedule);
+                                        ?>
+                                    </select>
+                                </td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+
+                <div id="dates" class="field required">
+                    <div class="start">
+                        <label class="label" for="start_date"><span><?php /* @escapeNotVerified */
+                                echo __('Start Date'); ?></span></label>&nbsp;&nbsp;
+                        <input type="text" class="dateclass" class="input-text required-entry hasDatepicker"
+                               title="<?php /* @escapeNotVerified */
+                               echo __('RepeatCount'); ?>" name="start_date" id="start_date"
+                               value="<?php if (isset($start)) {
+                                   echo $start;
+                               } ?>" data-input="start_date" autocomplete="off" data-validate="{required:true}"
+                               placeholder="YYYY-MM-DD" readonly/>
+                    </div>
+
+                    <div class="end">
+                        <label class="label" for="expire_date"><span><?php /* @escapeNotVerified */
+                                echo __('End Date'); ?></span></label>
+                        <input type="text" class="dateclass" class="input-text required-entry"
+                               title="<?php /* @escapeNotVerified */
+                               echo __('RepeatCount'); ?>" name="expire_date" id="expire_date"
+                               value="<?php if (isset($expire)) {
+                                   echo $expire;
+                               } ?>" data-input="expire_date" autocomplete="off" data-validate="{required:true}"
+                               placeholder="YYYY-MM-DD" readonly/>
+                    </div>
+                    <p>&nbsp;</p>
+
+                    <div class="field required">
+                        <label class="label" for="indefinately"><span><?php /* @escapeNotVerified */
+                                echo __('Recur Indefinitely'); ?></span></label>
+                        <input type="hidden" name="table_rec_id" value="<?php echo $recurringId ?>">
+                        <input type="checkbox" id="rec_indefinitely" name="rec_indefinitely"
+                               value="1" <?php if ($recindefinitely == 1) echo "checked"; ?>>
+                    </div>
+                </div>
+
+            </fieldset>
+
+        </div>
+        <br clear="all"/>
+        <hr>
+    </div>
+    <div style="width:100%; display: inline-block; clear: both;">
+        <div class="leftdiv">
+            <div id="paymentCheck" style="color: red; display: none;">
+                <div>Please fill all fields are required.</div>
+            </div>
+            <table>
+                <tr>
+                    <td class="tdfreq" style="width: 130px;">Payment Method</td>
+                    <td>
+                        <select name="method_id" class="selectdiv" id="selectdivPayment"
+                                data-validate="{required:true}">
+                            <option disabled>Please select payment method</option>
+                            <?php if (!empty($profiles)) {
+
+                                foreach ($profiles as $profile) {
+                                    ?>
+                                    <option value="<?php echo $profile->MethodID ?>"
+                                        <?php if ($profile->MethodID == $recurringPaymentMethodId)
+                                        {echo 'selected';} ?>>
+                                        <?php echo $profile->MethodName; ?>
+                                    </option>
+
+                                    <?php
+                                }
+                            }
+                            ?>
+                        </select>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="tdfreq" style="width: 175px;">Add New Payment Method</td>
+                    <td>
+                        <input type="checkbox" class="checkbox control-checkbox
+                        " name="payment[add_new]" id="options_add_new" value="1" data-selector="payment[add_new]">
+                    </td>
+                </tr>
+                <tr class="add-new" id="add-new">
+                    <td colspan="2">
+                        <fieldset class="fieldset">
+                            <span style="color: red; display: none;" id="payment_msg">All fields are required.</span>
+                            <span style="color: red; display: none;" id="payment_msgcNum">Please enter valid card number.</span>
+                            <span style="color: red; display: none;" id="payment_msgCvv">Please enter CVV between 3 and 4 digits.</span>
+                            <div class="field required">
+                                <label class="label" for="<?php echo $_code; ?>_cc_owner_new">
+                                    <span class="required"><?php echo __('Name on Card'); ?></span>
+                                </label>
+                                <div class="field-control control">
+                                    <input type="text" id="<?php echo $_code; ?>_cc_owner_new"
+                                           name="<?php echo $_code; ?>[cc_owner]"
+                                           title="<?php echo __('Name on Card'); ?>" class="input-text required"
+                                           value=""/>
+                                </div>
+                            </div>
+
+                            <div class="field required">
+                                <label class="label field-label" for="<?php echo $_code; ?>_cc_type_new">
+                                    <span class="required"><?php echo __('Credit Card Type'); ?></span>
+                                </label>
+                                <div class="field-control control">
+                                    <select id="<?php echo $_code; ?>_cc_type_new" name="<?php echo $_code; ?>[cc_type]"
+                                            class="required-entry select control-select">
+
+                                        <option value=""><?php echo __('Please Select Card Type'); ?></option>
+                                        <?php $_ccType = $block->getInfoData('cc_type'); ?>
+                                        <?php foreach ($block->getCcAvailableTypes() as $_typeCode => $_typeName): ?>
+
+                                            <option value="<?php echo $_typeCode; ?>"<?php if ($_typeCode == $_ccType): ?> selected="selected"<?php endif; ?>><?php echo $_typeName; ?></option>
+
+                                        <?php endforeach ?>
+
+                                    </select>
+
+                                </div>
+                            </div>
+
+                            <div class="field required">
+                                <label class="label field-label" for="<?php echo $_code; ?>_cc_number_new">
+                                    <span class="required"><?php echo __('Credit Card Number'); ?></span>
+                                </label>
+                                <div class="field-control control">
+                                    <input type="text" id="<?php echo $_code; ?>_cc_number_new"
+                                           name="<?php echo $_code; ?>[cc_number]"
+                                           title="<?php echo __('Credit Card Number'); ?>"
+                                           class="input-text control-text required-entry" value="" pattern="\d*"
+                                           minlength="15" maxlength="20"/>
+                                </div>
+                            </div>
+
+                            <div id="<?php echo $_code; ?>_cc_exp_new" class="field required">
+                                <label class="label field-label" for="<?php echo $_code; ?>_exp_new">
+                                    <span class="required"><?php echo __('Expiration Date'); ?></span>
+                                </label>
+                                <div class="field-control control">
+                                    <select id="<?php echo $_code; ?>_exp_new"
+                                            name="<?php echo $_code; ?>[cc_exp_month]"
+                                            class="month required-entry select control-select">
+                                        <?php $_ccExpMonth = $block->getInfoData('cc_exp_month'); ?>
+                                        <?php foreach ($block->getCcMonths() as $k => $v): ?>
+
+                                            <option value="<?php echo $k ? $k : ''; ?>"<?php if ($k == $_ccExpMonth): ?> selected="selected"<?php endif; ?>><?php echo $v; ?></option>
+
+                                        <?php endforeach; ?>
+                                    </select>
+
+                                    <?php $_ccExpYear = $block->getInfoData('cc_exp_year'); ?>
+
+                                    <select id="<?php echo $_code; ?>_exp_yr_new"
+                                            name="<?php echo $_code; ?>[cc_exp_year]"
+                                            class="year required-entry select control-select">
+
+                                        <?php foreach ($block->getCcYears() as $k => $v): ?>
+
+                                            <option value="<?php echo $k ? $k : ''; ?>"<?php if ($k == $_ccExpYear): ?> selected="selected"<?php endif; ?>><?php echo $v; ?></option>
+
+                                        <?php endforeach; ?>
+                                    </select>
+
+                                </div>
+                            </div>
+
+                            <?php if ($requestCC) { ?>
+                                <div class="field required">
+                                    <label class="label field-label" for="<?php echo $_code; ?>_cc_cid_new">
+                                        <span class="required"><?php echo __('CVV'); ?></span>
+                                    </label>
+                                    <div class="field-control control">
+                                        <input type="text" id="<?php echo $_code; ?>_cc_cid_new"
+                                               name="<?php echo $_code; ?>[cc_cid]"
+                                               title="<?php echo __('Card Verification Number'); ?>"
+                                               style="width: 50px;" pattern="\d*" minlength="3" maxlength="4"/>
+                                    </div>
+                                </div>
+                            <?php } ?>
+
+                        </fieldset>
+                    </td>
+                </tr>
+            </table>
+
+            <?php
+            $statusTitle = $payment->ScheduleStatus == 1 ? 'Resubscribe' : 'Unsubscribe';
+            ?>
+            <div class="actions-toolbar">
+
+                <div class="primary">
+                    <button type="button" class="action submit primary save_btn" title="<?php /* @escapeNotVerified */
+                    echo __('Update Payment Method'); ?>">
+                        <span><?php /* @escapeNotVerified */
+                            echo __('Save Changes'); ?></span>
+                    </button>
+
+                    <button type="button" id="sub_btn" class="action submit primary sub_btn"
+                            title="<?php /* @escapeNotVerified */
+                            echo __($statusTitle); ?>">
+                        <span><?php /* @escapeNotVerified */
+                            echo __($statusTitle); ?></span>
+                    </button>
+
+                </div>
+            </div>
+
+        </div>
+
+        <!--for subscription shipping address-->
+        <?php if ($shippingAddress): ?>
+        <div class="block-content">
+            <div class="box box-address-shipping">
+                <strong class="box-title">
+                    <span><?= $block->escapeHtml(__('Shipping Address')) ?></span>
+                </strong>
+                <div class="box-content">
+                    <p>
+                        <address>
+                            <?= $shippingAddress; ?>
+                        </address>
+                </div>
+            </div>
+        </div>
+        <?php endif; ?>
+    </div>
+</form>
+<form class="" id="unsub" action="<?php /* @escapeNotVerified */
+echo $block->getUrl('ebizcharge/recurrings/unsubaction', ['_secure' => true]); ?>" method="post">
+
+    <?php
+    echo $block->getBlockHtml('formkey');
+    $statusValue = $payment->ScheduleStatus == 1 ? 0 : 1;
+    ?>
+    <input type="hidden" name="sid" value="<?php echo $statusValue; ?>"/>
+    <input type="hidden" name="cid" value="<?php echo $block->getEbzcCustId(); ?>"/>
+    <input type="hidden" name="mid" value="<?php echo $block->getEbzcMethodId(); ?>"/>
+</form>
+
+<div id="myModel"></div>
+<div id="myModelConfirm"></div>
+
+<script type="text/x-magento-init">
+    {
+        "*": {
+            "Ebizcharge_Ebizcharge/js/recurring_edit" : {}
+        }
+    }
+</script>

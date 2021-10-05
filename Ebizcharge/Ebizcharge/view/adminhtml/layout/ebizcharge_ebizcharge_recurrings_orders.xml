@@ -1,0 +1,27 @@
+<?xml version="1.0"?>
+<!--
+/**
+* Declares the block and sets the template for the Cards/ListAction controller.
+*
+* @author      Century Business Solutions <support@centurybizsolutions.com>
+* @copyright   Copyright (c) 2020 Century Business Solutions  (www.centurybizsolutions.com)
+
+The name of this file uses the following pattern: routeId_controller_action.xml
+*/
+-->
+
+<page xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/page_configuration.xsd">
+    <head>
+        <link src="Ebizcharge_Ebizcharge::js/downloadOrders.js"/>
+    </head>
+    <referenceBlock name="page.title">
+        <action method="setPageTitle">
+            <argument name="title" xsi:type="string">Recurring Orders</argument>
+        </action>
+    </referenceBlock>
+    <body>
+        <referenceContainer name="content">
+            <uiComponent name="order_listing"/>
+        </referenceContainer>
+    </body>
+</page>

@@ -1,0 +1,10 @@
+<?xml version='1.0'?>
+<config xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance' xsi:noNamespaceSchemaLocation='urn:magento:framework/Event/etc/events.xsd'>
+	<event name="customer_register_success">
+        <observer name="Ebizcharge_Ebizcharge_Addcustomer" instance="Ebizcharge\Ebizcharge\Observer\Addcustomer" />
+    </event>
+	<event name="checkout_onepage_controller_success_action">
+		<observer name="Ebizcharge_Ebizcharge_Addorder" instance="Ebizcharge\Ebizcharge\Observer\Addorder" />
+	    <observer name="Ebizcharge_Ebizcharge_Addinvoice" instance="Ebizcharge\Ebizcharge\Observer\Addinvoice" />
+    </event>
+</config>

@@ -1,0 +1,165 @@
+<?php
+/**
+* Displays a form to edit the credit card information
+* for the selected saved payment method.
+*
+* @author      Century Business Solutions <support@centurybizsolutions.com>
+* @copyright   Copyright (c) 2020 Century Business Solutions  (www.centurybizsolutions.com)
+*/
+$payment = $block->getCustomerPaymentMethod(); 
+?>
+<form class="form-address-edit" action="<?php /* @escapeNotVerified */ echo $block->getUrl('ebizcharge/cards/updateaction', ['_secure' => true]); ?>" method="post" id="form-validate" enctype="multipart/form-data" data-hasrequired="<?php /* @escapeNotVerified */ echo __('* Required Fields'); ?>">
+    
+    <?php echo $block->getBlockHtml('formkey'); ?>
+	<input type="hidden" name="cid" value="<?php echo $block->getEbzcCustId(); ?>" />
+	<input type="hidden" name="mid" value="<?php echo $block->getEbzcMethodId(); ?>" />
+
+	<?php
+		$methodName = explode("-", $payment->MethodName);
+		$cardHolder = ltrim($methodName[1], " ");
+		
+		if (isset($methodName[2]))
+		{
+			$cardHolder .= ' '. $methodName[2];
+		}
+
+		$cardExpiration = explode("-", $payment->CardExpiration);
+		$card_exp_month = $cardExpiration[1];
+		$card_exp_month_name = "";
+		$card_exp_year = $cardExpiration[0];
+
+		switch ($card_exp_month) {
+			case '01':
+				$card_exp_month_name = "January";
+				break;
+			case '02':
+				$card_exp_month_name = "February";
+				break;
+			case '03':
+				$card_exp_month_name = "March";
+				break;
+			case '04':
+				$card_exp_month_name = "April";
+				break;
+			case '05':
+				$card_exp_month_name = "May";
+				break;
+			case '06':
+				$card_exp_month_name = "June";
+				break;
+			case '07':
+				$card_exp_month_name = "July";
+				break;
+			case '08':
+				$card_exp_month_name = "August";
+				break;
+			case '09':
+				$card_exp_month_name = "September";
+				break;
+			case '10':
+				$card_exp_month_name = "October";
+				break;
+			case '11':
+				$card_exp_month_name = "November";
+				break;
+			case '12':
+				$card_exp_month_name = "December";
+				break;
+			default:
+				break;
+		}
+	?>
+
+	<!--<input type="hidden" name="cc_holder" value="<?php /*echo $cardHolder; */?>" />-->
+	<input type="hidden" name="method_type" value="<?php echo explode(" ", $payment->MethodName)[0] ?>" />
+	
+	<fieldset class="fieldset items">
+		<legend class="legend"><span><?php /* @escapeNotVerified */ echo $block->escapeHtml($block->getMethodName()); ?></span></legend><br>
+        <div class="field required">
+            <label class="label" for="cc_holder"><span><?php /* @escapeNotVerified */ echo __('Card Holder'); ?></span></label>
+            <input type="text" class="input-text" title="<?php /* @escapeNotVerified */ echo __('Card Holder'); ?>" value="<?php echo $cardHolder ?>"
+                   name="cc_holder" id="cc_holder" data-input="cc_holder" autocomplete="off" data-validate="{'required-entry':true}" />
+        </div>
+        <div class="field required">
+			<label for="cc_exp_month" class="label">
+				<span><?php echo $block->escapeHtml(__('Expiration Date')); ?></span>
+			</label>
+			<div class="fields group group-2">
+				<div class="field">
+					<select name="cc_exp_month" class="select month" data-validate="{required:true}">
+						<option value="<?php echo $card_exp_month; ?>"><?php echo $card_exp_month_name; ?></option>
+						<option disabled>Please select month</option>
+						<option value="01"><?php echo $block->escapeHtml(__('January')); ?></option>
+						<option value="02"><?php echo $block->escapeHtml(__('February')); ?></option>
+						<option value="03"><?php echo $block->escapeHtml(__('March')); ?></option>
+						<option value="04"><?php echo $block->escapeHtml(__('April')); ?></option>
+						<option value="05"><?php echo $block->escapeHtml(__('May')); ?></option>
+						<option value="06"><?php echo $block->escapeHtml(__('June')); ?></option>
+						<option value="07"><?php echo $block->escapeHtml(__('July')); ?></option>
+						<option value="08"><?php echo $block->escapeHtml(__('August')); ?></option>
+						<option value="09"><?php echo $block->escapeHtml(__('September')); ?></option>
+						<option value="10"><?php echo $block->escapeHtml(__('October')); ?></option>
+						<option value="11"><?php echo $block->escapeHtml(__('November')); ?></option>
+						<option value="12"><?php echo $block->escapeHtml(__('December')); ?></option>
+					</select>
+				</div>
+				<div class="field">
+					<?php $years = range(date('Y', time()), date('Y', time()) + 10); ?>
+					<select name="cc_exp_year" class="select year" data-validate="{required:true}" style="width: 95%; float: right;">
+						<option value="<?php echo $card_exp_year; ?>"><?php echo $card_exp_year; ?></option>
+						<option disabled>Please select year</option>
+						<?php foreach ($years as $year) : ?>
+							<option value="<?php echo $year; ?>"><?php echo $year; ?></option>
+						<?php endforeach; ?>
+					</select>
+				</div>
+			</div>
+		</div>
+		<div class="field required">
+			<label class="label" for="avs_street"><span><?php /* @escapeNotVerified */ echo __('Card Billing Street'); ?></span></label>
+			<input type="text" class="input-text required-entry" title="<?php /* @escapeNotVerified */ echo __('Card Billing Street'); ?>" name="avs_street" id="avs_street"
+                   value="<?php if (isset($payment->AvsStreet)) {echo $payment->AvsStreet;} ?>" data-input="avs_street" autocomplete="off" data-validate="{required:true}" />
+		</div>
+		<div class="field required">
+			<label class="label" for="avs_zip"><span><?php /* @escapeNotVerified */ echo __('Zip Code'); ?></span></label>
+			<input type="text" class="input-text required-entry" title="<?php /* @escapeNotVerified */ echo __('Zip Code'); ?>" name="avs_zip" id="avs_zip" value="<?php if (isset($payment->AvsZip)) {echo $payment->AvsZip;} ?>" data-input="avs_zip" autocomplete="off" data-validate="{required:true}" />
+		</div>
+		<div class="field default">
+			<input type="checkbox" id="default" name="default" value="1" class="checkbox" <?php echo $payment->SecondarySort == 0 ? 'checked' : '' ?> >
+            <label class="label" for="default">
+                <span><?php echo $block->escapeHtml(__('Make this my default credit card.')); ?></span>
+            </label>
+		</div>
+	</fieldset>
+    <div class="actions-toolbar">
+        <div class="primary">
+            <a href="<?php echo $block->getUrl('ebizcharge/cards/listaction'); ?>">
+            	<button type="button" title="<?php /* @escapeNotVerified */ echo __('Cancel'); ?>" style="font-size: 1.8rem; line-height: 2.2rem; padding: 14px 17px;">
+                	<span><?php /* @escapeNotVerified */ echo __('Cancel'); ?></span>
+            	</button>
+            </a>
+            <button type="submit" class="action primary" title="<?php /* @escapeNotVerified */ echo __('Update Card'); ?>">
+                <span><?php /* @escapeNotVerified */ echo __('Update Card'); ?></span>
+            </button>
+        </div>
+    </div>
+</form>
+<script type="text/x-magento-init">
+    {
+        "#form-validate": {
+            "validation": {}
+        },
+        "#country": {
+            "regionUpdater": {
+                "optionalRegionAllowed": <?php /* @escapeNotVerified */ echo($block->getConfig('general/region/display_all') ? 'true' : 'false'); ?>,
+                "regionListId": "#region_id",
+                "regionInputId": "#region",
+                "postcodeId": "#zip",
+                "form": "#form-validate",
+                "regionJson": <?php /* @escapeNotVerified */ echo $this->helper('Magento\Directory\Helper\Data')->getRegionJson(); ?>,
+                "defaultRegion": "<?php /* @escapeNotVerified */ echo $block->getRegionId(); ?>",
+                "countriesWithOptionalZip": <?php /* @escapeNotVerified */ echo $this->helper('Magento\Directory\Helper\Data')->getCountriesWithOptionalZip(true); ?>
+            }
+        }
+    }
+</script>

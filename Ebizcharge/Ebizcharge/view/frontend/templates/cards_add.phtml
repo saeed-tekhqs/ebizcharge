@@ -1,0 +1,247 @@
+<?php
+/**
+ * Displays a form to add billing address and credit card information
+ * for a new credit card.
+ *
+ * @author      Century Business Solutions <support@centurybizsolutions.com>
+ * @copyright   Copyright (c) 2020 Century Business Solutions  (www.centurybizsolutions.com)
+ */
+
+/**
+ * @var \Magento\Customer\Block\Address\Edit $block
+ */
+
+/**
+ * @var \Ebizcharge\Ebizcharge\ViewModel\AchCard $addCardViewModel
+ */
+$addCardViewModel = $block->getData('addCardViewModel');
+
+$UserCvvRequired = 1; //$block->getConfig('payment/ebizcharge_ebizcharge/request_card_code');
+$phone = ''; $company = ''; $fax = ''; $city = '';
+$region = ''; $regionId = ''; $postCode = ''; $street = '';
+
+if($billingAddress = $addCardViewModel->getCustomerBillingAddress()) {
+    $phone = $billingAddress->getTelephone();
+    $company = $billingAddress->getCompany();
+    $fax = $billingAddress->getFax();
+    $city = $billingAddress->getCity();
+    $regionId = $billingAddress->getRegionId();
+    $region = $billingAddress->getRegion();
+    $postCode = $billingAddress->getPostcode();
+    $street = $billingAddress->getStreet();
+}
+?>
+<form class="form-address-edit" action="<?php /* @escapeNotVerified */ echo $addCardViewModel->getSaveUrl(); ?>" method="post" id="form-validate" enctype="multipart/form-data" data-hasrequired="<?php /* @escapeNotVerified */ echo __('* Required Fields'); ?>">
+    <fieldset class="fieldset">
+        <legend class="legend"><span><?php /* @escapeNotVerified */ echo __('Billing Information'); ?></span></legend><br>
+        <?php echo $block->getBlockHtml('formkey'); ?>
+        <?php echo $block->getNameBlockHtml(); ?>
+        <div class="field">
+            <label class="label" for="company"><span><?php /* @escapeNotVerified */ echo __('Company'); ?></span></label>
+            <input type="text" name="company" id="company" title="<?php /* @escapeNotVerified */ echo __('Company'); ?>"
+                   value="<?php echo $block->escapeHtml($company); ?>"
+                   class="input-text <?php /* @escapeNotVerified */ echo $this->helper('Magento\Customer\Helper\Address')->getAttributeValidationClass('company'); ?>" />
+        </div>
+        <div class="field required">
+            <label class="label" for="telephone"><span><?php /* @escapeNotVerified */ echo __('Phone Number'); ?></span></label>
+            <input type="text" name="telephone" value="<?php echo $block->escapeHtml($phone); ?>" title="<?php /* @escapeNotVerified */ echo __('Phone Number'); ?>" class="input-text <?php /* @escapeNotVerified */ echo $this->helper('Magento\Customer\Helper\Address')->getAttributeValidationClass('telephone'); ?>" id="telephone" />
+        </div>
+        <div class="field">
+            <label class="label" for="fax"><span><?php /* @escapeNotVerified */ echo __('Fax'); ?></span></label>
+            <input type="text" name="fax" id="fax" title="<?php /* @escapeNotVerified */ echo __('Fax'); ?>"
+                   value="<?php echo $block->escapeHtml($fax); ?>" class="input-text <?php /* @escapeNotVerified */ echo $this->helper('Magento\Customer\Helper\Address')->getAttributeValidationClass('fax'); ?>" />
+        </div>
+    </fieldset>
+    <fieldset class="fieldset">
+        <legend class="legend"><span><?php /* @escapeNotVerified */ echo __('Address'); ?></span></legend><br>
+        <?php $_streetValidationClass = $this->helper('Magento\Customer\Helper\Address')->getAttributeValidationClass('street'); ?>
+        <div class="field required">
+            <label for="street_1" class="label"><span><?php /* @escapeNotVerified */ echo __('Street Address'); ?></span></label>
+            <input type="text" name="street[]" value="<?php echo isset($street[0]) ? $block->escapeHtml($street[0]) : ''; ?>" title="<?php /* @escapeNotVerified */ echo __('Street Address'); ?>" id="street_1" class="input-text <?php /* @escapeNotVerified */ echo $_streetValidationClass; ?>" />
+            <div class="nested">
+
+                <?php $_streetValidationClass = trim(str_replace('required-entry', '', $_streetValidationClass)); ?>
+
+                <?php for ($_i = 1, $_n = $this->helper('Magento\Customer\Helper\Address')->getStreetLines(); $_i < $_n; $_i++): ?>
+                    <div class="field additional">
+                        <label class="label" for="street_<?php /* @escapeNotVerified */ echo $_i+1 ?>">
+                            <span><?php /* @escapeNotVerified */ echo __('Street Address %1', $_i+1); ?></span>
+                        </label>
+                        <input type="text" name="street[]" value="<?php echo $block->escapeHtml($block->getStreetLine($_i+1)); ?>" title="<?php /* @escapeNotVerified */ echo __('Street Address %1', $_i+1); ?>" id="street_<?php /* @escapeNotVerified */ echo $_i+1; ?>" class="input-text <?php /* @escapeNotVerified */ echo $_streetValidationClass; ?>" />
+                    </div>
+                <?php endfor; ?>
+
+            </div>
+        </div>
+
+        <?php if ($this->helper('Magento\Customer\Helper\Address')->isVatAttributeVisible()) : ?>
+            <div class="field taxvat">
+                <label class="label" for="vat_id"><span><?php /* @escapeNotVerified */ echo __('VAT Number'); ?></span></label>
+                <input type="text" name="vat_id" value="<?php echo $block->escapeHtml($block->getAddress()->getVatId()); ?>" title="<?php /* @escapeNotVerified */ echo __('VAT Number'); ?>" class="input-text <?php /* @escapeNotVerified */ echo $this->helper('Magento\Customer\Helper\Address')->getAttributeValidationClass('vat_id'); ?>" id="vat_id" />
+            </div>
+        <?php endif; ?>
+
+        <div class="field required">
+            <label class="label" for="city"><span><?php /* @escapeNotVerified */ echo __('City'); ?></span></label>
+            <input type="text" name="city" value="<?php echo $block->escapeHtml($city); ?>" title="<?php /* @escapeNotVerified */ echo __('City'); ?>" class="input-text <?php /* @escapeNotVerified */ echo $this->helper('Magento\Customer\Helper\Address')->getAttributeValidationClass('city'); ?>" id="city" />
+        </div>
+        <div class="field required">
+            <label class="label" for="region_id"><span><?php /* @escapeNotVerified */ echo __('State/Province'); ?></span></label>
+            <select id="region_id" name="region_id" title="<?php /* @escapeNotVerified */ echo __('State/Province'); ?>"
+                    class="validate-select" <?= !$addCardViewModel->displayAllRegion() ? ' disabled="disabled"' : ''; ?>>
+                <option value=<?php echo $regionId ?>><?php /* @escapeNotVerified */ echo __('Please select a region, state or province.'); ?></option>
+            </select>
+            <input type="text" id="region" name="region" value="<?php echo $region; ?>"  title="<?php /* @escapeNotVerified */ echo __('State/Province'); ?>"
+                   class="input-text <?php /* @escapeNotVerified */ echo $this->helper('Magento\Customer\Helper\Address')->getAttributeValidationClass('region'); ?>"<?= !$addCardViewModel->displayAllRegion() ? ' disabled="disabled"' : '';?> />
+        </div>
+        <div class="field required">
+            <label class="label" for="zip"><span><?php /* @escapeNotVerified */ echo __('Zip/Postal Code'); ?></span></label>
+            <input type="text" name="postcode" value="<?php echo $block->escapeHtml($postCode); ?>" title="<?php /* @escapeNotVerified */ echo __('Zip/Postal Code'); ?>" id="zip" class="input-text validate-zip-international <?php /* @escapeNotVerified */ echo $this->helper('Magento\Customer\Helper\Address')->getAttributeValidationClass('postcode'); ?>">
+        </div>
+        <div class="field required">
+            <label class="label" for="country"><span><?php /* @escapeNotVerified */ echo __('Country'); ?></span></label>
+            <?php echo $block->getCountryHtmlSelect(); ?>
+        </div>
+    </fieldset>
+
+    <fieldset class="fieldset items">
+        <legend class="legend"><span><?php /* @escapeNotVerified */ echo __('Payment Information'); ?></span></legend><br>
+        <div class="field required">
+            <label class="label" for="cc_holder"><span><?php /* @escapeNotVerified */ echo __('Card Holder'); ?></span></label>
+            <input type="text" class="input-text" title="<?php /* @escapeNotVerified */ echo __('Card Holder'); ?>" name="payment[cc_holder]" id="cc_holder" data-input="cc_holder" autocomplete="off" data-validate="{'required-entry':true}" />
+        </div>
+        <div class="field required">
+            <label for="cc_number" class="label">
+                <span><?php echo $block->escapeHtml(__('Credit Card Number')); ?></span>
+            </label>
+            <input type="number" id="cc_number" name="payment[cc_number]"
+                   title="<?php echo $block->escapeHtml(__('Credit Card Number')); ?>"
+                   class="input-text" data-validate="{'required-entry':true}" />
+        </div>
+
+        <div class="field required">
+            <label for="cc_type" class="label">
+                <span><?php echo $block->escapeHtml(__('Credit Card Type')); ?></span>
+            </label>
+            <select id="cc_type"
+                    data-mage-init='{
+					"creditCardType":{"creditCardTypeContainer":"#cc_type_ss_div"}
+				}' name="payment[cc_type]" data-validate="{'required-entry':true}" class="select">
+                <option value=""><?php echo $block->escapeHtml(__('--Please Select--')); ?></option>
+
+                <?php $avail_types = $addCardViewModel->getCcTypes(); ?>
+                <?php $types = $addCardViewModel->getEbizCcTypes(); ?>
+
+                <?php foreach ($avail_types as $code => $text) : ?>
+
+                    <?php if (in_array($code, explode(',', $types))): ?>
+                        <option  value="<?php echo $code; ?>"><?php /* @escapeNotVerified */ echo __($text) ?></option>
+                    <?php endif; ?>
+
+                <?php endforeach; ?>
+
+            </select>
+        </div>
+        <div class="field required">
+            <label for="cc_exp_month" class="label">
+                <span><?php echo $block->escapeHtml(__('Expiration Date')); ?></span>
+            </label>
+            <div class="fields group group-2">
+                <div class="field">
+                    <select id="cc_exp_month" name="payment[cc_exp_month]" class="select" data-validate="{'required-entry':true}">
+                        <option value="01"><?php echo $block->escapeHtml(__('January')); ?></option>
+                        <option value="02"><?php echo $block->escapeHtml(__('February')); ?></option>
+                        <option value="03"><?php echo $block->escapeHtml(__('March')); ?></option>
+                        <option value="04"><?php echo $block->escapeHtml(__('April')); ?></option>
+                        <option value="05"><?php echo $block->escapeHtml(__('May')); ?></option>
+                        <option value="06"><?php echo $block->escapeHtml(__('June')); ?></option>
+                        <option value="07"><?php echo $block->escapeHtml(__('July')); ?></option>
+                        <option value="08"><?php echo $block->escapeHtml(__('August')); ?></option>
+                        <option value="09"><?php echo $block->escapeHtml(__('September')); ?></option>
+                        <option value="10"><?php echo $block->escapeHtml(__('October')); ?></option>
+                        <option value="11"><?php echo $block->escapeHtml(__('November')); ?></option>
+                        <option value="12"><?php echo $block->escapeHtml(__('December')); ?></option>
+                    </select>
+                </div>
+                <div class="field">
+                    <?php $years = range(date('Y', time()), date('Y', time()) + 10); ?>
+                    <select id="cc_exp_year" name="payment[cc_exp_year]" class="select year" data-validate="{'required-entry':true}" style="width: 95%; float: right;">
+                        <?php foreach ($years as $year) : ?>
+                            <option value="<?php echo $year; ?>"><?php echo $year; ?></option>
+                        <?php endforeach; ?>
+                    </select>
+                </div>
+            </div>
+        </div>
+        <?php if ($UserCvvRequired == 1) { ?>
+            <div class="field required">
+                <label for="cc_cid" class="label">
+                    <span><?php echo $block->escapeHtml(__('CVV')); ?></span>
+                </label>
+                <div><input type="number" id="cc_cid" name="payment[cc_cid]" title="<?php echo $block->escapeHtml(__('CVV')); ?>" class="input-text" style="width: 50%;" minlength="3" maxlength="4" data-validate="{'required-entry':true}" /></div>
+            </div>
+        <?php } ?>
+        <div class="field">
+            <input type="checkbox" id="default" name="payment[default]" value="1" class="checkbox">
+            <label class="label" for="default">
+                <span><?php echo $block->escapeHtml(__('Make this my default credit card.')); ?></span>
+            </label>
+        </div>
+    </fieldset>
+    <div class="actions-toolbar">
+        <div class="primary">
+            <a href="<?php echo $block->getUrl('ebizcharge/cards/listaction'); ?>">
+                <button type="button" title="<?php /* @escapeNotVerified */ echo __('Cancel'); ?>" style="font-size: 1.8rem; line-height: 2.2rem; padding: 14px 17px;">
+                    <span><?php /* @escapeNotVerified */ echo __('Cancel'); ?></span>
+                </button>
+            </a>
+            <button type="submit" class="action primary" title="<?php /* @escapeNotVerified */ echo __('Save Card'); ?>">
+                <span><?php /* @escapeNotVerified */ echo __('Save Card'); ?></span>
+            </button>
+        </div>
+    </div>
+</form>
+
+<script type="text/javascript">
+    require(['jquery'], function($) {
+
+        $(document).ready(function() {
+
+            jQuery('#cc_number').change(function () {
+
+                let cc = jQuery(this).val();
+                if(!cc || !cc.length) return undefined;
+                let ccType = '';
+                let firstNumber = cc.charAt(0);
+                if(firstNumber == '4') ccType = 'VI';
+                if(firstNumber == '5') ccType = 'MC';
+                if(firstNumber == '3') ccType = 'AE';
+                if(firstNumber == '6') ccType = 'DI';
+
+                jQuery('#cc_type').val(ccType);
+                if(ccType != '') {
+                    jQuery('#cc_type option:not(:selected)').prop('disabled', true);
+                }
+            });
+        });
+    });
+</script>
+<script type="text/x-magento-init">
+    {
+        "#form-validate": {
+            "validation": {}
+        },
+        "#country": {
+            "regionUpdater": {
+                "optionalRegionAllowed": <?php /* @escapeNotVerified */ echo ($addCardViewModel->displayAllRegion() ? 'true' : 'false'); ?>,
+                "regionListId": "#region_id",
+                "regionInputId": "#region",
+                "postcodeId": "#zip",
+                "form": "#form-validate",
+                "regionJson": <?php /* @escapeNotVerified */ echo $this->helper('Magento\Directory\Helper\Data')->getRegionJson(); ?>,
+                "defaultRegion": "<?php /* @escapeNotVerified */ echo $block->getRegionId(); ?>",
+                "countriesWithOptionalZip": <?php /* @escapeNotVerified */ echo $this->helper('Magento\Directory\Helper\Data')->getCountriesWithOptionalZip(true); ?>
+            }
+        }
+    }
+</script>

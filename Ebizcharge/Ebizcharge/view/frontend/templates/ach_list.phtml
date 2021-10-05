@@ -1,0 +1,222 @@
+<?php
+/**
+* If there are saved payment methods, this will display a list of all of them.
+* If there are no saved payment methods, this will display a message with a 
+* button to add a new payment method.
+*
+* @author      Century Business Solutions <support@centurybizsolutions.com>
+* @copyright   Copyright (c) 2020 Century Business Solutions  (www.centurybizsolutions.com)
+*/
+$achStatus = $block->getAchStatus();
+$paymentCards = $block->getPaymentMethods();
+
+$fullUrl = $block->getRequest()->getUriString();
+$baseUrl = $block->getBaseUrl();
+$urlArray = explode( $baseUrl, $fullUrl );
+$urlCurrent = 'ebizcharge/ach/listaction/';
+
+if ( $urlArray[ 1 ] == $urlCurrent )
+	$buttonClass = "disabled";
+else
+	$buttonClass = "";
+
+
+if($achStatus == 0){ 
+	echo "<a href=$baseUrl/ebizcharge/cards/listaction/>Back</a>";
+	echo "<br>";
+	exit("ACH Is Disabled");
+}
+
+
+?>
+<style>
+.tablinks {
+	all: initial;
+    background-image: none;
+    background: #fff;
+    color: #ccc;
+    cursor: pointer;
+    display: inline-block;
+    font-family: 'Open Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    font-weight: 600;
+    margin: 0;
+    padding: 7px 15px;
+    font-size: 1.4rem;
+    line-height: 1.6rem;
+    box-sizing: border-box;
+    vertical-align: middle;
+	pointer-events: none;
+	cursor: pointer;
+	border-bottom: 4px solid #f00;
+	
+}
+.tablinksNotSelect {
+	all: initial;
+    background-image: none;
+    background: #fff;
+    color: #333333;
+	border: 0px;
+    cursor: pointer;
+    display: inline-block;
+    font-family: 'Open Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    font-weight: 600;
+    margin: 0;
+    padding: 7px 15px;
+    font-size: 1.4rem;
+    line-height: 1.6rem;
+    box-sizing: border-box;
+    vertical-align: middle;
+	
+	
+	
+}	
+.tablinksNotSelect:hover {
+	
+	border: 0px;
+    background-image: none;
+    background: #fff;
+    color: #333333;
+    
+    display: inline-block;
+    font-family: 'Open Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    font-weight: 600;
+    margin: 0;
+    padding: 7px 15px;
+    font-size: 1.4rem;
+    line-height: 1.6rem;
+    box-sizing: border-box;
+    vertical-align: middle;
+	border-bottom: 4px solid #f00;
+    }
+
+/*
+.tablinks:hover {
+	all: initial;
+    border-bottom: 1px solid #f00;
+    color: #333333;
+	cursor: pointer;
+    display: inline-block;
+    font-family: 'Open Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    font-weight: 600;
+    margin: 0;
+    padding: 7px 15px;
+    font-size: 1.4rem;
+    line-height: 1.9rem;
+    box-sizing: border-box;
+    vertical-align: middle;
+}
+*/
+.modal-popup .modal-inner-wrap {
+        width: 35%;
+    }
+	
+</style>
+
+    <div class="table-wrapper my-credit-cards">
+		<div class="tab">
+			<div class="tablinksNotSelect" onclick="openPage('<?php  echo $block->escapeUrl($block->getUrl('ebizcharge/cards/listaction/')); ?>')">Stored Cards</div>
+			<div class="tablinks" disabled <?php  echo $buttonClass?> >Stored Bank Accounts</div>
+			
+			
+	    </div>
+		<br />
+		<div class="actions-toolbar">
+         <div class="primary">
+          
+          <a href="<?php echo $this->getUrl('ebizcharge/ach/addaction', ['_secure' => true]); ?>">
+        	<button type="button" class="action primary" title="<?php /* @escapeNotVerified */ echo __('Add New Bank Account'); ?>">
+            	<span><?php /* @escapeNotVerified */ echo __('Add New Bank Account'); ?></span>
+        	</button>
+          </a>
+    </div>
+</div>
+		<?php if (!empty($paymentCards)): ?>
+		
+        <table class="data table">
+            <caption class="table-caption"><?php /* @noEscape */ echo __('My ACH'); ?></caption>
+            <thead>
+		        <tr>
+		            <th><?php /* @noEscape */ echo __('Account Holder'); ?></th>
+		            <th><?php /* @noEscape */ echo __('Account Type & Number'); ?></th>
+		            <th><?php /* @noEscape */ echo __('Default'); ?></th>
+		            <th><div style="margin: 0 auto;"><?php /* @noEscape */ echo __('Actions'); ?></div></th>
+		            <th>&nbsp;</th>
+		        </tr>
+            </thead>
+            <tbody>
+            <?php foreach ($paymentCards as $payment):
+				$accountType = isset($payment->AccountType) ? $payment->AccountType : "N/A";
+				?>
+				<tr>
+					<td><?php echo $payment->AccountHolderName; ?></td>
+					<td>
+						<img src="<?php echo $this->getViewFileUrl('Ebizcharge_Ebizcharge::images/Icon-Bank-Account.svg'); ?>" />
+						<?php echo ucwords($accountType) .' xxxxxxxx'.  substr($payment->Account,-4); ?>
+					</td>
+                    <td><?php echo (isset($payment->SecondarySort) && $payment->SecondarySort == 0) ? 'Yes' : 'No'; ?></td>
+                    <td class="col actions">
+						<div style="margin: 0 auto;">
+						<a href="<?php  echo $this->getUrl('ebizcharge/ach/editaction', ['_secure' => true, 'cid' => $this->getEbzcCustId(), 'mid' => $payment->MethodID, 'method' => urlencode($payment->MethodName)]); ?>" style="float: left;"><?php echo __('Edit'); ?></a>
+						
+						<form class="form" style="float: left; margin-left: 10px;" action="<?php echo $block->escapeUrl($block->getUrl('ebizcharge/ach/deleteaction')); ?>" method="post">
+							<?php echo $block->getBlockHtml('formkey'); ?>
+							<input name="cid" value="<?php /* @noEscape */ echo $block->getEbzcCustId(); ?>" type="hidden" />
+							<input name="mid" value="<?php /* @noEscape */ echo $payment->MethodID; ?>" type="hidden" />
+							<input name="method" value="<?php /* @noEscape */ echo urlencode($payment->MethodName); ?>" type="hidden" />
+							
+							<button type="submit" class="action delete" data-mage-init='{
+                                "Ebizcharge_Ebizcharge/js/deleteWidget":{
+									"type": "popup",
+									"modalClass": "my-credit-cards-popup",
+									"toggleEvent": "click",
+									"title": "<?php echo $block->escapeHtml(__('Delete')) ?>",
+                                    "content": "Are you sure you want to delete this bank account: <?php
+                                        /* @noEscape */ echo $payment->MethodName
+                                    ?>?"
+                                }
+                            }'>
+								<span><?php echo $block->escapeHtml(__('Delete')) ?></span>
+							</button>
+						</form>
+			          </div>	
+					</td>
+				</tr>
+			<?php endforeach; ?>
+			</tbody>
+        </table>
+       <?php else: ?>
+    <div style="margin-top: 15px" class="message info empty"><span><?php /* @noEscape */ echo __('You have no saved bank accounts.'); ?></span></div>
+<?php endif ?>
+    </div>
+
+
+
+
+<script type="text/javascript">
+
+	require( [ 'jquery' , 'domReady!'], function ( $ ) {
+    var menuItems = document.querySelectorAll('.nav items a');
+    var path = window.location.pathname;
+			
+    path = path.replace(/\/$/, "");
+    path = decodeURIComponent(path);
+    $(".nav a").each(function () {
+        var href = $(this).attr('href');
+		var vault = href.includes("vault");
+		var cards = href.includes("cards");
+		 if(vault === false && cards === true)
+			 {
+				 $(this).closest('li').addClass('current');
+			 }
+    });
+
+
+} );
+	
+function openPage( url ) {
+
+		if ( url != "" )
+			window.location = url;
+
+	}
+</script>

@@ -1,0 +1,542 @@
+<!--
+/**
+* Displays the checkout form for Ebizcharge.
+*
+* @author      Century Business Solutions <support@centurybizsolutions.com>
+* @copyright   Copyright (c) 2020 Century Business Solutions  (www.centurybizsolutions.com)
+*/
+-->
+<div class="payment-method" data-bind="css: {'_active': (getCode() == isChecked())}">
+    <!--
+    /**
+    * Displays the radio option to select Ebizcharge as the payment option.
+    */
+    -->
+
+    <div class="payment-method-title field choice">
+        <input type="radio"
+               name="payment[method]"
+               class="radio"
+               data-bind="attr: {'id': getCode()}, value: getCode(), checked: isChecked, click: selectPaymentMethod, visible: isRadioButtonVisible()"/>
+        <label data-bind="attr: {'for': getCode()}" class="label"><span data-bind="text: getTitle()"></span></label>
+    </div>
+
+    <div class="payment-method-content">
+        <!-- ko foreach: getRegion('messages') -->
+        <!-- ko template: getTemplate() --><!-- /ko -->
+        <!--/ko-->
+
+        <div class="payment-method-billing-address">
+            <!-- ko foreach: $parent.getRegion(getBillingAddressFormName()) -->
+            <!-- ko template: getTemplate() --><!-- /ko -->
+            <!--/ko-->
+        </div>
+
+        <div class="cart-page">
+            <a href="/checkout/cart/">Back to cart</a>
+        </div>
+
+        <div>&nbsp;</div>
+
+        <form class="form" data-bind="attr: {'id': getCode() + '-form'}">
+
+            <div class="row" style="padding-bottom: 10px; border-bottom: 1px solid silver">
+
+		    <!-- ko if: (getAchStatus()==1)-->
+            <input type="radio" name="payment[ebzc_payment_option]" id="use_credit_card" value="credit_card" class="validate-one-required-by-name"
+                   data-bind="click: updateEbizCCPaymentOption(1) , value: useACH"/>
+            <label for="use_credit_card" class="label">
+                <span>Pay by Card</span>
+            </label>
+
+            <input style="margin-left: 15px" checked type="radio" name="payment[ebzc_payment_option]" id="use_ach" value="ACH" class="validate-one-required-by-name"
+                   data-bind="click: updateEbizCCPaymentOption(2), value: useACH"/>
+            <label for="use_ach" class="label">
+                <span>Pay by Bank Account </span>
+            </label>
+                <!-- /ko -->
+			<!-- ko if: (getAchStatus()==0)-->
+            <input type="radio" name="payment[ebzc_payment_option]"  id="use_credit_card" value="credit_card" class="validate-one-required-by-name"
+                   data-bind="checked:useACH ,click: updateEbizCCPaymentOption(1) , value: useACH"/>
+            <label for="use_credit_card" class="label">
+                <span>Pay by card</span>
+            </label>
+				<!-- /ko -->
+
+            </div>
+            <br/>
+
+            <!-- ko if: (useCC) -->
+            <!-- ko if: (getUseVault()) -->
+            <input type="hidden" name="payment[ebzc_cust_id]" data-bind="attr: {'id': 'ebzc_cust_id'}, value: getEbzcCustId()" id="ebzc_cust_id"/>
+
+            <!-- ko if: (getAllSavedCards())-->
+            <!--
+            /**
+            * Displays a radio option to select a saved payment method.
+            */
+            -->
+            <div class="divSaved">
+					<input type="radio" name="payment[ebzc_option]" id="wp_use_saved_card" value="saved" checked="checked" class="validate-one-required-by-name"
+                           data-bind="checked: useSavedCard, click: updateEbizSavedOption(), value: useSavedCard" />
+                <label for="wp_use_saved_card" class="label">
+						<span><!-- ko i18n: 'Select saved card'--><!-- /ko --></span>
+                </label>
+
+                <!-- ko if: (useSavedCard)-->
+
+                <div>&nbsp;</div>
+
+                <fieldset data-bind="attr: {class: 'fieldset payment items ccard ' + getCode(), id: 'saved_payment_form_' + getCode()}">
+
+                    <!--
+                    /**
+                    * Displays a drop down list of saved payment methods.
+                    * optionsCaption: $t('Please select ...'),
+                    */
+                    -->
+                    <select name="payment[ebzc_method_id]" class="select required-entry pmethodddl" data-bind="attr: {id: getCode() + '_ebzc_method'},
+										enable: true,
+										options: getStoredCards(),
+										optionsValue: 'MethodID',
+										optionsText: 'MethodName',
+										value: selectedCardToken" id="mage_ebizcharge_ebzc_method" style="width: 225px;" >
+                    </select>
+
+                    <!--
+                    /**
+                    * Displays field for CVV.
+                    */
+                    -->
+                    <!-- ko if: (getRequestCardCode())-->
+                    <div>&nbsp;</div>
+
+                    <div class="field cvv required" data-bind="attr: {id: getCode() + '_cc_type_cvv_div'}">
+                        <label data-bind="attr: {for: getCode() + '_cc_cid'}" class="label">
+							<span><!-- ko i18n: 'CVV'--><!-- /ko --></span>
+                        </label>
+
+                        <div class="control _with-tooltip">
+                            <!-- ko if: getSelectedCardData().selectedcardType === null -->
+                            <!-- ko if: getCountSavedCards().CardCount === 1 && getCountSavedCards().CardType === "A" -->
+                            <input type="number"
+                                   autocomplete="off"
+                                   class="input-text cvv required-entry txtSavedAmex"
+                                   name="payment[cc_cid]"
+                                   value=""
+                                   data-bind="attr: {id: getCode() + '_cc_cid',
+											title: $t('CVV'),
+											'data-container': getCode() + '-cc-cvv',
+											'data-validate': JSON.stringify({'required-number':true, 'validate-card-cvv-amex':'#' + getCode() + '_cc_type'})},
+											enable: isActive($parents),
+											value: creditCardVerificationNumber" />
+                            <!-- /ko -->
+                            <!-- ko if: getCountSavedCards().CardCount === 1 && getCountSavedCards().CardType !== "A" -->
+                            <input type="number"
+                                   autocomplete="off"
+                                   class="input-text cvv required-entry txtSaved"
+                                   name="payment[cc_cid]"
+                                   value=""
+                                   data-bind="attr: {id: getCode() + '_cc_cid',
+											title: $t('CVV'),
+											'data-container': getCode() + '-cc-cvv',
+											'data-validate': JSON.stringify({'required-number':true, 'validate-card-cvv':'#' + getCode() + '_cc_type'})},
+											enable: isActive($parents),
+											value: creditCardVerificationNumber" />
+                            <!-- /ko -->
+                            <!-- /ko -->
+                            <!-- ko if: getSelectedCardData().selectedcardType !== null -->
+                            <!-- ko if: getSelectedCardData().selectedcardType === "A" -->
+                            <input type="number"
+                                   autocomplete="off"
+                                   class="input-text cvv required-entry txtSavedAmex"
+                                   name="payment[cc_cid]"
+                                   value=""
+                                   data-bind="attr: {id: getCode() + '_cc_cid',
+											title: $t('CVV'),
+											'data-container': getCode() + '-cc-cvv',
+											'data-validate': JSON.stringify({'required-number':true, 'validate-card-cvv-amex':'#' + getCode() + '_cc_type'})},
+											enable: isActive($parents),
+											value: creditCardVerificationNumber" />
+                            <!-- /ko -->
+                            <!-- ko if: getSelectedCardData().selectedcardType !== "A" -->
+                            <input type="number"
+                                   autocomplete="off"
+                                   class="input-text cvv required-entry txtSaved"
+                                   name="payment[cc_cid]"
+                                   value=""
+                                   data-bind="attr: {id: getCode() + '_cc_cid',
+											title: $t('CVV'),
+											'data-container': getCode() + '-cc-cvv',
+											'data-validate': JSON.stringify({'required-number':true, 'validate-card-cvv':'#' + getCode() + '_cc_type'})},
+											enable: isActive($parents),
+											value: creditCardVerificationNumber" />
+                            <!-- /ko -->
+                            <!-- /ko -->
+                            <div class="field-tooltip toggle">
+								<span class="field-tooltip-action action-cvv"
+                                      tabindex="0"
+                                      data-toggle="dropdown"
+                                      data-bind="attr: {title: $t('What is this?')}, mageInit: {'dropdown':{'activeClass': '_active'}}">
+									<span><!-- ko i18n: 'What is this?'--><!-- /ko --></span>
+								</span>
+                                <div class="field-tooltip-content"
+                                     data-target="dropdown"
+                                     data-bind="html: getCvvImageHtml()"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- /ko -->
+                    <!--<div>&nbsp;</div>-->
+                    <!--
+                    /**
+                    * Displays recurring fields here if needed.
+                    */
+                    -->
+                </fieldset>
+
+                <!--/ko-->
+            </div>
+
+            <div>&nbsp;</div>
+
+            <!--
+            /**
+            * Displays a radio option to update a saved payment method.
+            */
+            -->
+            <div class="divUpdate">
+                <input type="radio" name="payment[ebzc_option]" id="wp_update_saved_card" value="update" class="validate-one-required-by-name" data-bind="checked: updateSavedCard, click: updateEbizUpdateOption(), value: updateSavedCard" />
+                <label for="wp_update_saved_card" class="label">
+						<span><!-- ko i18n: 'Update existing card'--><!-- /ko --></span>
+                </label>
+
+                <!-- ko if: (updateSavedCard)-->
+
+                <div>&nbsp;</div>
+
+                <fieldset data-bind="attr: {class: 'fieldset payment items ccard ' + getCode(), id: 'update_payment_form_' + getCode()}">
+
+                    <!--
+                    /**
+                    * Displays a drop down list of saved payment methods.
+                    * optionsCaption: $t('Please select ...'),
+                    */
+                    -->
+					<select name="payment[ebzc_method_id]" class="select required-entry pmethodddl"
+							data-bind="attr: {id: getCode() + '_ebzc_method'},
+							event:{ change: cardChanged },
+										enable: true,
+										options: getStoredCards(),
+										optionsValue: 'MethodID',
+										optionsText: 'MethodName',
+										value: selectedCardToken" style="width: 225px;">
+                    </select>
+
+                    <div>&nbsp;</div>
+
+                    <!--
+                    /**
+                    * Displays fields for the expiration date.
+                    */
+                    -->
+                    <div class="field required" data-bind="attr: {id: getCode() + '_cc_type_exp_div'}">
+                        <label data-bind="attr: {for: getCode() + '_expiration'}" class="label">
+                            <span><!-- ko i18n: 'Expiration Date'--><!-- /ko --></span>
+                        </label>
+                        <div class="fields group group-2">
+                            <div class="field month">
+                                <select  name="payment[cc_exp_month]"
+                                         class="select select-month"
+										 data-bind="attr: {id: getCode() + '_expiration', 'data-container': getCode() + '-cc-month',
+											 'data-validate': JSON.stringify({required:true, 'validate-cc-exp':'#' + getCode() + '_expiration_yr'})},
+													enable: isActive($parents),
+													options: getCcMonthsValues(),
+													optionsValue: 'value',
+													optionsText: 'month',
+													optionsCaption: $t('Month'),
+													value: creditCardExpMonth">
+                                </select>
+                            </div>
+
+                            <div class="field year">
+                                <select name="payment[cc_exp_year]"
+                                        class="select select-year"
+                                        data-bind="attr: {id: getCode() + '_expiration_yr', 'data-container': getCode() + '-cc-year', 'data-validate': JSON.stringify({required:true})},
+												   enable: isActive($parents),
+												   options: getCcYearsValues(),
+												   optionsValue: 'value',
+												   optionsText: 'year',
+												   optionsCaption: $t('Year'),
+												   value: creditCardExpYear">
+                                </select>
+                            </div>
+
+                        </div>
+                    </div>
+
+                    <!--
+                    /**
+                    * Displays a field for the street address associated with the card.
+                    */
+                    -->
+                    <div class="field required">
+                        <label data-bind="attr: {for: getCode() + '_avs_street'}" class="label">
+							<span><!-- ko i18n: 'Card Billing Street'--><!-- /ko --></span>
+                        </label>
+                        <div><input type="text" name="payment[ebzc_avs_street]" class="input-text required-entry" value=""
+                                    data-bind="attr: {
+												id: getCode() + '_avs_street',
+												title: $t('Card Billing Street'),
+												valueUpdate: 'keyup'}" style="width: 225px;" />
+						</div>
+                    </div>
+
+                    <!--
+                    /**
+                    * Displays a field for the zip code associated with the card.
+                    */
+                    -->
+                    <div class="field required">
+                        <label data-bind="attr: {for: getCode() + '_avs_zip'}" class="label">
+							<span><!-- ko i18n: 'Zip Code'--><!-- /ko --></span>
+                        </label>
+                        <div><input type="text" name="payment[ebzc_avs_zip]" class="input-text required-entry" value=""
+                                    data-bind="attr: {
+												id: getCode() + '_avs_zip',
+												title: $t('Zip Code'),
+												valueUpdate: 'keyup'}" style="width: 225px;" /></div>
+                    </div>
+
+                    <!--
+                    /**
+                    * Displays field for CVV.
+                    */
+                    -->
+                    <!-- ko if: (getRequestCardCode())-->
+                    <div class="field cvv required" data-bind="attr: {id: getCode() + '_cc_type_cvv_div'}">
+                        <label data-bind="attr: {for: getCode() + '_cc_cid'}" class="label">
+							<span><!-- ko i18n: 'CVV'--><!-- /ko --></span>
+                        </label>
+                        <div class="control _with-tooltip">
+                            <!-- ko if: getSelectedCardData().selectedcardType === null -->
+                            <!-- ko if: getCountSavedCards().CardCount === 1 && getCountSavedCards().CardType === "A" -->
+                            <input type="number"
+                                   autocomplete="off"
+                                   class="input-text cvv required-entry txtUpdateAmex"
+                                   name="payment[cc_cid]"
+                                   value=""
+                                   data-bind="attr: {id: getCode() + '_cc_cid',
+										title: $t('CVV'),
+										'data-container': getCode() + '-cc-cvv',
+										'data-validate': JSON.stringify({'required-number':true, 'validate-card-cvv-amex':'#' + getCode() + '_cc_type'})},
+										enable: isActive($parents),
+										value: creditCardVerificationNumber" />
+                            <!-- /ko -->
+                            <!-- ko if: getCountSavedCards().CardCount === 1 && getCountSavedCards().CardType !== "A" -->
+                            <input type="number"
+                                   autocomplete="off"
+                                   class="input-text cvv required-entry txtUpdate"
+                                   name="payment[cc_cid]"
+                                   value=""
+                                   data-bind="attr: {id: getCode() + '_cc_cid',
+										title: $t('CVV'),
+										'data-container': getCode() + '-cc-cvv',
+										'data-validate': JSON.stringify({'required-number':true, 'validate-card-cvv':'#' + getCode() + '_cc_type'})},
+										enable: isActive($parents),
+										value: creditCardVerificationNumber" />
+                            <!-- /ko -->
+                            <!-- /ko -->
+                            <!-- ko if: getSelectedCardData().selectedcardType !== null -->
+                            <!-- ko if: getSelectedCardData().selectedcardType === "A" -->
+                            <input type="number"
+                                   autocomplete="off"
+                                   class="input-text cvv required-entry txtUpdateAmex"
+                                   name="payment[cc_cid]"
+                                   value=""
+                                   data-bind="attr: {id: getCode() + '_cc_cid',
+										title: $t('CVV'),
+										'data-container': getCode() + '-cc-cvv',
+										'data-validate': JSON.stringify({'required-number':true, 'validate-card-cvv-amex':'#' + getCode() + '_cc_type'})},
+										enable: isActive($parents),
+										value: creditCardVerificationNumber" />
+                            <!-- /ko -->
+                            <!-- ko if: getSelectedCardData().selectedcardType !== "A" -->
+                            <input type="number"
+                                   autocomplete="off"
+                                   class="input-text cvv required-entry txtUpdate"
+                                   name="payment[cc_cid]"
+                                   value=""
+                                   data-bind="attr: {id: getCode() + '_cc_cid',
+										title: $t('CVV'),
+										'data-container': getCode() + '-cc-cvv',
+										'data-validate': JSON.stringify({'required-number':true, 'validate-card-cvv':'#' + getCode() + '_cc_type'})},
+										enable: isActive($parents),
+										value: creditCardVerificationNumber" />
+                            <!-- /ko -->
+                            <!-- /ko -->
+                            <div class="field-tooltip toggle">
+								<span class="field-tooltip-action action-cvv"
+                                      tabindex="0"
+                                      data-toggle="dropdown"
+                                      data-bind="attr: {title: $t('What is this?')}, mageInit: {'dropdown':{'activeClass': '_active'}}">
+									<span><!-- ko i18n: 'What is this?'--><!-- /ko --></span>
+								</span>
+                                <div class="field-tooltip-content"
+                                     data-target="dropdown"
+                                     data-bind="html: getCvvImageHtml()"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- /ko -->
+                    <!--<div>&nbsp;</div>-->
+                    <!--
+                    /**
+                    * Displays recurring fields here if needed.
+                    */
+                    -->
+                </fieldset>
+
+                <!--/ko-->
+
+            </div>
+
+            <div>&nbsp;</div>
+
+            <!-- /ko -->
+
+            <!-- 
+            /**
+            * Displays a radio option to pay with a new payment method.
+            */
+            -->
+
+            <div class="divNew">
+                <input type="radio" id="wp_use_new_card" name="payment[ebzc_option]" value="new" class="validate-one-required-by-name" data-bind="checked: addNewCard, click: updateEbizNewOption(), value: addNewCard">
+                <label class="label" for="wp_use_new_card">
+                    <span><!-- ko i18n: 'Add new card'--><!-- /ko --></span>
+                </label>
+
+                <!-- ko if: (addNewCard)-->
+
+                <div>&nbsp;</div>
+
+                <!-- ko template: 'Ebizcharge_Ebizcharge/payment/cc-form' --><!-- /ko -->
+
+                <!-- ko if: (getSaveCard()) -->
+                <!-- 
+                /**
+                * Displays a checkbox to see if the user would like to save this payment method.
+                */
+                -->
+                <input type="checkbox" checked="checked" name="payment[ebzc_save_payment]" data-bind="attr: {id: getCode() + '_save_payment', title: $t('Save My Credit Card Info')}, enable: true, value: '1', checked: storeInVault"/>
+                <label data-bind="attr: {for: getCode() + '_save_payment'}" class="label">
+                    <span><!-- ko i18n: 'Save this credit card information.'--><!-- /ko --></span>
+                </label>
+                <!--/ko-->
+                <!--/ko-->
+            </div>
+
+            <div>&nbsp;</div>
+
+            <!-- /ko -->
+            <!-- ko if: (!getUseVault())-->
+            <!-- ko template: 'Ebizcharge_Ebizcharge/payment/cc-form' --><!-- /ko -->
+            <!-- /ko -->
+
+            <!-- /ko -->
+
+          <!-- ko if: (useACH)-->
+			<!-- ko if: (getUseVault()) -->
+
+            <div class="divNew">
+                <input type="radio" checked="checked" id="wp_use_new_account" name="payment[ebzc_option]" value="new" class="validate-one-required-by-name" data-bind="checked: addNewCard, click: updateEbizNewOption(), value: addNewCard">
+
+                <label class="label" for="wp_use_new_account">
+                    <span><!-- ko i18n: 'Add new bank account'--><!-- /ko --></span>
+                </label>
+
+                <!-- ko if: (addNewCard)-->
+
+                <div>&nbsp;</div>
+
+                <!-- ko template: 'Ebizcharge_Ebizcharge/payment/ach-form' --><!-- /ko -->
+
+                <!-- ko if: (getSaveCard()) -->
+                <!--
+                /**
+                * Displays a checkbox to see if the user would like to save this payment method.
+                */
+                -->
+                <input type="checkbox" checked="checked" name="payment[ebzc_save_payment]" data-bind="attr: {id: getCode() + '_save_payment', title: $t('Save My Credit Card Info')}, enable: true, value: '1', checked: storeInVault"/>
+                <label data-bind="attr: {for: getCode() + '_save_payment'}" class="label">
+                    <span><!-- ko i18n: 'Save this bank account information.'--><!-- /ko --></span>
+                </label>
+                <!--/ko-->
+                <!--/ko-->
+            </div>
+			<div>&nbsp;</div>
+			 <!-- ko if: (getAllSavedAccounts())-->
+            <div class="divSaved">
+					<input type="radio" name="payment[ebzc_option]" id="wp_use_saved_account" value="saved" class="validate-one-required-by-name"
+                           data-bind="checked: useSavedCard, click: updateEbizSavedOption(), value: useSavedCard" />
+					<label for="wp_use_saved_account" class="label">
+						<span><!-- ko i18n: 'Select saved bank account'--><!-- /ko --></span>
+					</label>
+
+					<div>&nbsp;</div>
+                    <!-- ko if: (useSavedCard)-->
+					<fieldset data-bind="attr: {class: 'fieldset payment items ccard ' + getCode(), id: 'saved_payment_form_' + getCode()}">
+
+					<!--
+					/**
+					* Displays a drop down list of saved payment methods.
+					* optionsCaption: $t('Please select ...'),
+					*/
+					-->
+					<select name="payment[ebzc_method_id]" class="select required-entry pmethodddl" data-bind="attr: {id: getCode() + '_ebzc_method'},
+										enable: true,
+										options: getStoredAccounts(),
+										optionsValue: 'MethodID',
+										optionsText: 'MethodName',
+										value: selectedCardToken" id="mage_ebizcharge_ebzc_method1" style="width: 225px;" >
+					</select>
+
+					</fieldset>
+				<!-- /ko -->
+				</div>
+            <div>&nbsp;</div>
+            <!-- /ko -->
+
+			<!-- /ko -->
+			 <!-- ko if: (!getUseVault())-->
+            <!-- ko template: 'Ebizcharge_Ebizcharge/payment/ach-form' --><!-- /ko -->
+            <!-- /ko -->
+          <!-- /ko -->
+
+        </form>
+
+        <div class="checkout-agreements-block">
+            <!-- ko foreach: $parent.getRegion('before-place-order') -->
+            <!-- ko template: getTemplate() --><!-- /ko -->
+            <!--/ko-->
+        </div>
+
+        <div class="actions-toolbar">
+            <div class="primary">
+                <button class="action primary checkout"
+                        type="submit"
+                        data-bind="
+                        click: preparePayment,
+                        attr: {title: $t('Place Order')},
+                        css: {disabled: !isPlaceOrderActionAllowed()},
+                        enable: (getCode() == isChecked())
+                        "
+                        disabled>
+                    <span data-bind="text: $t('Place Order')"></span>
+                </button>
+            </div>
+        </div>
+
+    </div>
+</div>

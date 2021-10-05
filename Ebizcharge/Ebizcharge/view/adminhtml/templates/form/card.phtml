@@ -1,0 +1,772 @@
+<?php
+/**
+ * Displays the payment form for orders created in adminhtml.
+ *
+ * @author      Century Business Solutions <support@centurybizsolutions.com>
+ * @copyright   Copyright (c) 2020 Century Business Solutions  (www.centurybizsolutions.com)
+ */
+$clientKey = $block->escapeHtml($block->getClientKey());
+$requestCCAdmin = $block->getRequestCardCodeAdmin();
+
+$savePayment = $block->getPaymentSavePayment();
+
+$saveCardEnabled = $block->saveCardEnabled();
+
+$deleteUrl = $block->getDeleteUrl();
+
+$savedCardsCount = $block->getSavedCards();
+
+$savedAccountsCount = $block->getSavedAccounts();
+
+$isAchActive = $block->achEnabled();
+
+if ($saveCardEnabled || 1) {
+    if (is_object($block->getSavedCards())) {
+        $savedCards[] = $block->getSavedCards();
+    } else {
+        $savedCards = $block->getSavedCards();
+    }
+
+} else {
+    $savedCards = [];
+}
+
+if (is_object($block->getSavedAccounts())) {
+    $savedAccounts[] = $block->getSavedAccounts();
+} else {
+    $savedAccounts = $block->getSavedAccounts();
+}
+
+
+$wpData = [
+    "clientKey" => $clientKey,
+];
+
+$serializedFormData = $this->helper('Magento\Framework\Json\Helper\Data')->jsonEncode($wpData);
+$_code = $block->getMethodCode();
+$useVault = $block->hasToken();
+
+if ($isAchActive == 1) {
+    $check = '';
+    $style = "display: none;";
+} else {
+    $check = 'checked';
+    $style = "display: block;";
+}
+?>
+
+<input id="<?php echo $_code; ?>_payment_method" type="hidden" name="payment[method]" value="<?php echo $_code; ?>"/>
+<div id="payment_form_<?php echo $_code; ?>" class="admin__page-section-item" style=" display:none;"
+     data-mage-init='{"ebizcharge":<?php echo $serializedFormData; ?>}'>
+
+
+    <input type="hidden" name="ebzc_option_hidden" id="ebzc_option_hidden" value="new"/>
+    <input type="hidden" name="payment[cc_type]" id="cc_type" value="credit_card"/>
+    <div class="row" id="my-select-content" style="padding-bottom: 10px; border-bottom: 1px solid silver">
+        <input type="radio" name="payment[ebzc_option_type]" id="ebizs_option" value="credit_card"
+               class="validate-one-required-by-name ebizs_option" <?php echo $check; ?> required/>
+        <label for="ebizs_option" class="label">
+            <span>Pay by Card</span>
+        </label>
+        <?php if ($isAchActive == 1) { ?>
+            <input style="margin-left: 15px" type="radio" name="payment[ebzc_option_type]" id="ebizs_option_ach" value="ACH"
+                   class="validate-one-required-by-name ebizs_option" required/>
+            <label for="ebizs_option_ach" class="label">
+                <span>Pay by Bank </span>
+            </label>
+        <?php } ?>
+
+    </div>
+
+    <!--card block start-->
+    <fieldset class="admin__fieldset" id="ccBlock" style="<?php echo $style; ?>">
+
+        <?php if ($useVault) {
+            if ($savedCards) { ?>
+
+                <div class="admin__field">
+                    <div class="admin__field-control control">
+                        <input type="hidden" name="payment[paymentToken]" id="payment_token" value="1"/>
+                        <input type="hidden" name="payment[ebzc_cust_id]"
+                               value="<?php echo $block->getEbzcCustId(); ?>"/>
+
+                        <input type="radio" class="ebzc_option" id="ebzc_option_saved" name="payment[ebzc_option]"
+                               value="saved" disabled=""/>
+                        <label class="admin__field-label"
+                               for="ebzc_option_saved"><?php echo __('Select saved card'); ?></label>
+                        <div class="admin__field-option show_saved_selected _required">
+                            <select id="<?php echo $_code; ?>_cc_token" name="payment[ebzc_method_id]"
+                                    class="select admin__control-select saved_tokens required-entry">
+
+                                <?php
+                                $counter = 0;
+                                foreach ($savedCards as $savedCard) {
+                                    $savedCardnew = get_object_vars($savedCard);
+                                    $counter = $counter + 1;
+                                    ?>
+                                    <option value="<?php echo $savedCardnew['MethodID']; ?>" <?php if (($savedCardnew['SecondarySort'] == 0) && ($counter == 1)) {
+                                        echo 'selected="selected"';
+                                    } ?><?php //echo $savedCardnew['SecondarySort'] ? 'selected="selected"' : '';
+                                    ?>>
+                                        <?php echo $savedCardnew['MethodName']; ?>
+                                    </option>
+                                    <?php
+                                }
+                                ?>
+
+                            </select>
+
+                        </div>
+                        <div class="admin__field-option show_saved_selected <?php echo $requestCCAdmin ? '_required' : ''; ?>">
+                            <label class="label admin__field-label" for="<?php echo $_code; ?>_cc_cid">
+                                <span class="<?php echo $requestCCAdmin ? 'required' : ''; ?>"><?php echo __('CVV'); ?></span>
+                            </label>
+                            <div class="admin__field-control control">
+                                <input type="text" id="<?php echo $_code; ?>_cc_cid" name="payment[cc_cid]"
+                                       title="<?php echo __('CVV'); ?>"
+                                       class="input-text admin__control-text validate-cc-cvn <?php echo $requestCCAdmin ? 'required-entry' : ''; ?>"
+                                       value="" style="max-width: 100%; min-width: 8.5rem; width: auto;"/>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="admin__field">
+                    <div class="admin__field-control control">
+                        <input type="hidden" name="payment[paymentToken]" id="payment_token" value="1"/>
+                        <input type="hidden" name="payment[ebzc_cust_id]" value="<?php echo $block->getEbzcCustId(); ?>"
+                               id="<?php echo $_code; ?>_cust_id"/>
+                        <input type="hidden" name="<?php echo $_code; ?>_delete_url"
+                               value="<?php echo $deleteUrl . "ebizcharge/cards/inlineaction"; ?>"
+                               id="<?php echo $_code; ?>_delete_url"/>
+
+                        <input type="radio" class="ebzc_option" id="ebzc_option_update" name="payment[ebzc_option]"
+                               value="update" disabled=""/>
+                        <label class="admin__field-label"
+                               for="ebzc_option_update"><?php echo __('Update saved card'); ?></label>
+                        <div class="admin__field-option show_update_selected _required">
+
+                            <select id="<?php echo $_code; ?>_cc_token_update" name="payment[ebzc_method_id]"
+                                    class="select admin__control-select saved_tokens_update required-entry">
+
+                                <?php
+                                $counter = 0;
+                                foreach ($savedCards as $savedCard) {
+                                    $savedCardnew = get_object_vars($savedCard);
+                                    $counter = $counter + 1;
+                                    ?>
+
+                                    <option value="<?php echo $savedCardnew['MethodID']; ?>" <?php if (($savedCardnew['SecondarySort'] == 0) && ($counter == 1)) {
+                                        echo 'selected="selected"';
+                                    } ?><?php //echo $savedCardnew['SecondarySort'] ? 'selected="selected"' : '';
+                                    ?>>
+                                        <?php echo $savedCardnew['MethodName']; ?>
+                                    </option>
+
+                                <?php } ?>
+
+                            </select>
+
+                        </div>
+
+                        <div id="<?php echo $_code; ?>_cc_type_exp_div"
+                             class="admin__field-option show_update_selected _required">
+                            <label class="label admin__field-label" for="<?php echo $_code; ?>_expiration_new"><span
+                                        class="required"><?php echo __('Expiration Date'); ?></span></label>
+                            <div class="admin__field-control control">
+
+                                <select id="<?php echo $_code; ?>_expiration_update" name="payment[cc_exp_month]"
+                                        class="month validate-cc-exp required-entry select admin__control-select">
+                                    <?php $_ccExpMonth = $block->getInfoData('cc_exp_month'); ?>
+
+                                    <?php foreach ($block->getCcMonths() as $k => $v): ?>
+
+                                        <option value="<?php echo $k ? $k : ''; ?>"<?php if ($k == $_ccExpMonth): ?> selected="selected"<?php endif; ?>><?php echo $v; ?></option>
+
+                                    <?php endforeach; ?>
+                                </select>
+
+                                <?php $_ccExpYear = $block->getInfoData('cc_exp_year'); ?>
+
+                                <select id="<?php echo $_code; ?>_expiration_yr_update" name="payment[cc_exp_year]"
+                                        class="year required-entry select admin__control-select">
+
+                                    <?php foreach ($block->getCcYears() as $k => $v): ?>
+
+                                        <option value="<?php echo $k ? $k : ''; ?>"<?php if ($k == $_ccExpYear): ?> selected="selected"<?php endif; ?>><?php echo $v; ?></option>
+
+                                    <?php endforeach; ?>
+                                </select>
+
+                            </div>
+                        </div>
+
+                        <div class="admin__field-option show_update_selected _required">
+                            <label class="label admin__field-label" for="<?php echo $_code; ?>_avs_street"><span
+                                        class="required"><?php echo __('Card Billing Street'); ?></span></label>
+                            <div class="admin__field-control control">
+                                <input type="text" id="<?php echo $_code; ?>_avs_street" name="payment[ebzc_avs_street]"
+                                       title="<?php echo __('Card Billing Street'); ?>"
+                                       class="input-text admin__control-text required-entry" value=""/>
+                            </div>
+                        </div>
+
+                        <div class="admin__field-option show_update_selected _required">
+                            <label class="label admin__field-label" for="<?php echo $_code; ?>_avs_zip"><span
+                                        class="required"><?php echo __('Zip Code'); ?></span></label>
+                            <div class="admin__field-control control">
+                                <input type="text" id="<?php echo $_code; ?>_avs_zip" name="payment[ebzc_avs_zip]"
+                                       title="<?php echo __('Zip Code'); ?>"
+                                       class="input-text admin__control-text required-entry" value=""/>
+                            </div>
+                        </div>
+
+                        <div class="admin__field-option show_update_selected <?php echo $requestCCAdmin ? ' _required' : ''; ?>">
+                            <label class="label admin__field-label" for="<?php echo $_code; ?>_cc_cid_update">
+                                <span class="required"><?php echo __('CVV'); ?></span>
+                            </label>
+                            <div class="admin__field-control control">
+                                <input type="text" id="<?php echo $_code; ?>_cc_cid_update" name="payment[cc_cid]"
+                                       title="<?php echo __('CVV'); ?>"
+                                       class="input-text admin__control-text validate-cc-cvn <?php echo $requestCCAdmin ? 'required-entry' : ''; ?>"
+                                       value="" style="max-width: 100%; min-width: 8.5rem; width: auto;"/>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            <?php } ?>
+
+            <div class="admin__field">
+                <div class="admin__field-control control">
+
+                    <div class="admin__field-control control">
+                        <input type="radio" class="ebzc_option" id="ebzc_option_new" name="payment[ebzc_option]"
+                               value="new" disabled=""/>
+                        <label class="admin__field-label"
+                               for="ebzc_option_new"><?php echo __('Add New Card'); ?></label>
+                        <input type="hidden" name="payment[cc_last4]" id="cc_last4" value=""/>
+                    </div>
+
+                    <div class="admin__field-option show_new_selected _required">
+                        <label class="label admin__field-label" for="<?php echo $_code; ?>_cc_owner_new"><span
+                                    class="required"><?php echo __('Name on Card'); ?></span></label>
+                        <div class="admin__field-control control">
+                            <input type="text" id="<?php echo $_code; ?>_cc_owner_new" name="payment[cc_owner]"
+                                   title="<?php echo __('Name on Card'); ?>"
+                                   class="input-text admin__control-text validate-cc-owner required-entry" value=""/>
+                        </div>
+                    </div>
+
+                    <div class="admin__field-option show_new_selected _required">
+                        <label class=" label admin__field-label" for="<?php echo $_code; ?>_cc_type_new"><span
+                                    class="required"><?php echo __('Credit Card Type'); ?></span></label>
+                        <div class="admin__field-control control">
+
+                            <select id="<?php echo $_code; ?>_cc_type_new" name="payment[cc_type]"
+                                    class="required-entry select admin__control-select validate-cc-type-select">
+
+                                <option value="">--<?php echo __('Please Select'); ?>--</option>
+
+                                <?php $_ccType = $block->getInfoData('cc_type'); ?>
+                                <?php foreach ($block->getCcAvailableTypes() as $_typeCode => $_typeName): ?>
+
+                                    <option value="<?php echo $_typeCode; ?>"<?php if ($_typeCode == $_ccType): ?> selected="selected"<?php endif; ?>><?php echo $_typeName; ?></option>
+
+                                <?php endforeach ?>
+
+                            </select>
+
+                        </div>
+                    </div>
+
+                    <div class="admin__field-option show_new_selected _required">
+                        <label class="label admin__field-label" for="<?php echo $_code; ?>_cc_number_new"><span
+                                    class="required"><?php echo __('Credit Card Number'); ?></span></label>
+                        <div class="admin__field-control control">
+                            <input type="text" id="<?php echo $_code; ?>_cc_number_new" name="payment[cc_number]"
+                                   title="<?php echo __('Credit Card Number'); ?>"
+                                   class="input-text admin__control-text validate-cc-number validate-cc-type required-entry"
+                                   value="" pattern="\d*" minlength="16" maxlength="16"/>
+                        </div>
+                    </div>
+
+                    <div id="<?php echo $_code; ?>_cc_type_exp_div"
+                         class="admin__field-option show_new_selected _required">
+                        <label class="label admin__field-label" for="<?php echo $_code; ?>_expiration_new"><span
+                                    class="required"><?php echo __('Expiration Date'); ?></span></label>
+                        <div class="admin__field-control control">
+
+                            <select id="<?php echo $_code; ?>_expiration_new" name="payment[cc_exp_month]"
+                                    class="month validate-cc-exp required-entry select admin__control-select">
+                                <?php $_ccExpMonth = $block->getInfoData('cc_exp_month'); ?>
+
+                                <?php foreach ($block->getCcMonths() as $k => $v): ?>
+
+                                    <option value="<?php echo $k ? $k : ''; ?>"<?php if ($k == $_ccExpMonth): ?> selected="selected"<?php endif; ?>><?php echo $v; ?></option>
+
+                                <?php endforeach; ?>
+                            </select>
+
+                            <?php $_ccExpYear = $block->getInfoData('cc_exp_year'); ?>
+
+                            <select id="<?php echo $_code; ?>_expiration_yr_new" name="payment[cc_exp_year]"
+                                    class="year required-entry select admin__control-select">
+
+                                <?php foreach ($block->getCcYears() as $k => $v): ?>
+
+                                    <option value="<?php echo $k ? $k : ''; ?>"<?php if ($k == $_ccExpYear): ?> selected="selected"<?php endif; ?>><?php echo $v; ?></option>
+
+                                <?php endforeach; ?>
+                            </select>
+
+                        </div>
+                    </div>
+
+                    <div class="admin__field-option show_new_selected <?php echo $requestCCAdmin ? ' _required' : ''; ?>">
+                        <label class="label admin__field-label" for="<?php echo $_code; ?>_cc_cid_new">
+                            <span class="<?php echo $requestCCAdmin ? 'required' : ''; ?>"><?php echo __('CVV'); ?></span>
+                        </label>
+                        <div class="admin__field-control control">
+                            <input type="text" id="<?php echo $_code; ?>_cc_cid_new" name="payment[cc_cid]"
+                                   title="<?php echo __('CVV'); ?>"
+                                   class="input-text admin__control-text validate-cc-cvn <?php echo $requestCCAdmin ? 'required-entry' : ''; ?>"
+                                   value="" style="max-width: 100%; min-width: 8.5rem; width: auto;"/>
+                        </div>
+                    </div>
+
+                    <?php if (!$savePayment): ?>
+
+                        <div class="admin__field-option show_new_selected _required">
+                            <input type="checkbox" checked="checked" name="payment[ebzc_save_payment]"
+                                   id="<?php echo $_code; ?>_save_payment"
+                                   title="<?php echo __('Save My Credit Card Info'); ?>" value="1"/>
+                            <label for="<?php echo $_code; ?>_save_payment" class="label">
+                                <span><?php echo __('Save this credit card information.'); ?></span>
+                            </label>
+                        </div>
+
+                    <?php else: ?>
+
+                        <div class="admin__field-option show_new_selected _required">
+                            <input type="hidden" checked="checked" name="payment[ebzc_save_payment]"
+                                   id="<?php echo $_code; ?>_save_payment"
+                                   title="<?php echo __('Save My Credit Card Info'); ?>" value="1"/>
+                        </div>
+
+                    <?php endif; ?>
+
+                </div>
+            </div>
+
+        <?php } else { ?>
+
+            <div class="admin__field">
+                <div class="admin__field-control control">
+
+                    <div class="admin__field-control control">
+                        <input type="radio" class="ebzc_option" id="ebzc_option_new" name="payment[ebzc_option]"
+                               value="new" disabled=""/>
+                        <label class="admin__field-label"
+                               for="ebzc_option_new"><?php echo __('Add New Card'); ?></label>
+                        <input type="hidden" name="payment[cc_last4]" id="cc_last4" value=""/>
+                    </div>
+
+                    <div class="admin__field-option show_new_selected _required">
+                        <label class="label admin__field-label" for="<?php echo $_code; ?>_cc_owner_new"><span
+                                    class="required"><?php echo __('Name on Card'); ?></span></label>
+                        <div class="admin__field-control control">
+                            <input type="text" id="<?php echo $_code; ?>_cc_owner_new" name="payment[cc_owner]"
+                                   title="<?php echo __('Name on Card'); ?>"
+                                   class="input-text admin__control-text validate-cc-owner required-entry" value=""/>
+                        </div>
+                    </div>
+
+                    <div class="admin__field-option show_new_selected _required">
+                        <label class=" label admin__field-label" for="<?php echo $_code; ?>_cc_type_new"><span
+                                    class="required"><?php echo __('Credit Card Type'); ?></span></label>
+                        <div class="admin__field-control control">
+
+                            <select id="<?php echo $_code; ?>_cc_type_new" name="payment[cc_type]"
+                                    class="required-entry select admin__control-select validate-cc-type-select">
+
+                                <option value="">--<?php echo __('Please Select'); ?>--</option>
+
+                                <?php $_ccType = $block->getInfoData('cc_type'); ?>
+                                <?php foreach ($block->getCcAvailableTypes() as $_typeCode => $_typeName): ?>
+
+                                    <option value="<?php echo $_typeCode; ?>"<?php if ($_typeCode == $_ccType): ?> selected="selected"<?php endif; ?>><?php echo $_typeName; ?></option>
+
+                                <?php endforeach ?>
+
+                            </select>
+
+                        </div>
+                    </div>
+
+                    <div class="admin__field-option show_new_selected _required">
+                        <label class="label admin__field-label" for="<?php echo $_code; ?>_cc_number_new"><span
+                                    class="required"><?php echo __('Credit Card Number'); ?></span></label>
+                        <div class="admin__field-control control">
+                            <input type="text" id="<?php echo $_code; ?>_cc_number_new" name="payment[cc_number]"
+                                   title="<?php echo __('Credit Card Number'); ?>"
+                                   class="input-text admin__control-text validate-cc-number validate-cc-type required-entry"
+                                   value="" pattern="\d*" minlength="16" maxlength="16"/>
+                        </div>
+                    </div>
+
+                    <div id="<?php echo $_code; ?>_cc_type_exp_div"
+                         class="admin__field-option show_new_selected _required">
+                        <label class="label admin__field-label" for="<?php echo $_code; ?>_expiration_new"><span
+                                    class="required"><?php echo __('Expiration Date'); ?></span></label>
+                        <div class="admin__field-control control">
+
+                            <select id="<?php echo $_code; ?>_expiration_new" name="payment[cc_exp_month]"
+                                    class="month validate-cc-exp required-entry select admin__control-select">
+                                <?php $_ccExpMonth = $block->getInfoData('cc_exp_month'); ?>
+
+                                <?php foreach ($block->getCcMonths() as $k => $v): ?>
+
+                                    <option value="<?php echo $k ? $k : ''; ?>"<?php if ($k == $_ccExpMonth): ?> selected="selected"<?php endif; ?>><?php echo $v; ?></option>
+
+                                <?php endforeach; ?>
+                            </select>
+
+                            <?php $_ccExpYear = $block->getInfoData('cc_exp_year'); ?>
+
+                            <select id="<?php echo $_code; ?>_expiration_yr_new" name="payment[cc_exp_year]"
+                                    class="year required-entry select admin__control-select">
+
+                                <?php foreach ($block->getCcYears() as $k => $v): ?>
+
+                                    <option value="<?php echo $k ? $k : ''; ?>"<?php if ($k == $_ccExpYear): ?> selected="selected"<?php endif; ?>><?php echo $v; ?></option>
+
+                                <?php endforeach; ?>
+                            </select>
+
+                        </div>
+                    </div>
+                    <div class="admin__field-option show_new_selected <?php echo $requestCCAdmin ? ' _required' : ''; ?>">
+                        <label class="label admin__field-label" for="<?php echo $_code; ?>_cc_cid_new">
+                            <span class="<?php echo $requestCCAdmin ? 'required' : ''; ?>"><?php echo __('CVV'); ?></span>
+                        </label>
+                        <div class="admin__field-control control">
+                            <input type="text" id="<?php echo $_code; ?>_cc_cid_new" name="payment[cc_cid]"
+                                   title="<?php echo __('CVV'); ?>"
+                                   class="input-text admin__control-text validate-cc-cvn required-entry" value=""
+                                   style="max-width: 25%;" pattern="\d*" minlength="3" maxlength="4"/>
+                        </div>
+                    </div>
+
+                    <?php if (!$savePayment): ?>
+
+                        <div class="admin__field-option show_new_selected _required">
+                            <input type="checkbox" checked="checked" name="payment[ebzc_save_payment]"
+                                   id="<?php echo $_code; ?>_save_payment"
+                                   title="<?php echo __('Save My Credit Card Info'); ?>" value="1"/>
+                            <label for="<?php echo $_code; ?>_save_payment" class="label">
+                                <span><?php echo __('Save this credit card information.'); ?></span>
+                            </label>
+                        </div>
+
+                    <?php else: ?>
+
+                        <div class="admin__field-option show_new_selected _required">
+                            <input type="hidden" checked="checked" name="payment[ebzc_save_payment]"
+                                   id="<?php echo $_code; ?>_save_payment"
+                                   title="<?php echo __('Save My Credit Card Info'); ?>" value="1"/>
+                        </div>
+
+                    <?php endif; ?>
+
+                </div>
+            </div>
+
+        <?php } ?>
+
+        <div class="admin__field">
+            <div class="admin__field-control control">
+                <input type="hidden" name="payment[paymentToken]" id="payment_token" value="1"/>
+                <input type="hidden" name="payment[ebzc_cust_id]" value="<?php echo $block->getEbzcCustId(); ?>"/>
+
+                <input type="radio" class="ebzc_option" id="ebzc_option_paylater" name="payment[ebzc_option]"
+                       value="paylater" disabled=""/>
+                <label class="admin__field-label" for="ebzc_option_paylater"><?php echo __('Pay Later'); ?></label>
+
+                <div class="admin__field-option show_paylater_selected _required">
+                    <input type="checkbox" checked="checked" name="payment[ebzc_paylater_payment]"
+                           id="<?php echo $_code; ?>_paylater" title="<?php echo __('Pay Later'); ?>" value="1"/>
+                    <label for="<?php echo $_code; ?>_paylater" class="label">
+                        <span><?php echo __('Allow to pay through EbizCharge Connect.'); ?></span>
+                    </label>
+                </div>
+
+            </div>
+        </div>
+
+    </fieldset>
+    <!--card block end-->
+    <!--ach block start-->
+
+    <fieldset class="admin__fieldset" id="achBlock" style="display: block;">
+        <div class="admin__field-control control">
+            <div class="admin__field">
+                <div class="admin__field-control control">
+                    <input type="hidden" name="payment[paymentToken]" id="payment_token" value="1"/>
+                    <input type="hidden" name="payment[ebzc_cust_id]"
+                           value="<?php echo $block->getEbzcCustId(); ?>"/>
+
+                    <input type="radio" class="ebzc_option" id="ebzc_option_saved_ach" name="payment[ebzc_option]"
+                           value="saved" checked/>
+                    <label class="admin__field-label"
+                           for="ebzc_option_saved_ach"><?php echo __('Select saved bank account'); ?></label>
+                    <div class="admin__field-option show_saved_selected _required">
+                        <select id="ebizcharge_ebizcharge_ebzc_method_ach" name="payment[ebzc_method_id]"
+                                class="select admin__control-select saved_tokens required-entry">
+
+                            <?php
+                            $counter = 0;
+                            foreach ($savedAccounts as $savedAccount) {
+                                $savedAccountnew = get_object_vars($savedAccount);
+                                $counter = $counter + 1;
+                                ?>
+                                <option value="<?php echo $savedAccountnew['MethodID']; ?>" <?php if (($savedAccountnew['SecondarySort'] == 0) && ($counter == 1)) {
+                                    echo 'selected="selected"';
+                                } ?><?php //echo $savedCardnew['SecondarySort'] ? 'selected="selected"' : '';
+                                ?>>
+                                    <?php echo $savedAccountnew['MethodName']; ?>
+                                </option>
+                                <?php
+                            }
+                            ?>
+
+                        </select>
+
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+        <div class="admin__field-control control">
+
+            <div class="admin__field-control control">
+                <input type="radio" class="ebzc_option" id="ebzc_option_new_ach" name="payment[ebzc_option]"
+                       value="new" disabled=""/>
+                <label class="admin__field-label"
+                       for="ebzc_option_new"><?php echo __('Add New Bank Account'); ?></label>
+                <input type="hidden" name="payment[cc_last4]" id="cc_last4" value=""/>
+            </div>
+
+            <div class="admin__field-option show_new_selected _required">
+                <label class="label admin__field-label" for="<?php echo $_code; ?>_cc_owner_new"><span
+                            class="required"><?php echo __('Name on Card'); ?></span></label>
+                <div class="admin__field-control control">
+                    <input type="text" id="<?php echo $_code; ?>_cc_owner_new_ach" name="payment[cc_owner]"
+                           title="<?php echo __('Name on Card'); ?>"
+                           class="input-text admin__control-text validate-cc-owner required-entry" value=""/>
+                </div>
+            </div>
+
+
+            <div class="admin__field-option show_new_selected _required">
+                <label class="label admin__field-label" for="<?php echo $_code; ?>_cc_number_new"><span
+                            class="required"><?php echo __('Account Number'); ?></span></label>
+                <div class="admin__field-control control" id="ach_account">
+                    <!--<input type="text" id="<?php echo $_code; ?>_cc_number_new_ach" name="payment[cc_number1]"
+                                   title="<?php echo __('Account Number'); ?>"
+                                   class="input-text admin__control-text"
+                                   value=""/>-->
+                </div>
+            </div>
+
+            <div class="admin__field-option show_new_selected _required">
+                <label class="label admin__field-label" for="<?php echo $_code; ?>_cc_routing_new"><span
+                            class="required"><?php echo __('Routing Number'); ?></span></label>
+                <div class="admin__field-control control">
+                    <input type="text" id="<?php echo $_code; ?>_cc_routing_new_ach" name="payment[ach_routing]"
+                           title="<?php echo __('Routing Number'); ?>"
+                           class="input-text admin__control-text"
+                           value=""/>
+                </div>
+            </div>
+            <div class="admin__field-option show_new_selected _required">
+                <label class="label admin__field-label" for="<?php echo $_code; ?>_cc_routing_new"><span
+                            class="required"><?php echo __('Account Type'); ?></span></label>
+                <div class="admin__field-control control">
+                    <select name="payment[ach_type]" id="type_ach"
+                            class="required-entry select admin__control-select validate-cc-type-select">
+
+                        <option value="checking">checking</option>
+                        <option value="savings">savings</option>
+                    </select>
+                </div>
+            </div>
+
+
+            <?php if (!$savePayment): ?>
+
+                <div class="admin__field-option show_new_selected _required">
+                    <input type="checkbox" checked="checked" name="payment[ebzc_save_payment]"
+                           id="<?php echo $_code; ?>_save_payment"
+                           title="<?php echo __('Save My Credit Card Info'); ?>" value="1"/>
+                    <label for="<?php echo $_code; ?>_save_payment" class="label">
+                        <span><?php echo __('Save this bank information.'); ?></span>
+                    </label>
+                </div>
+
+            <?php else: ?>
+
+                <div class="admin__field-option show_new_selected _required">
+                    <input type="hidden" checked="checked" name="payment[ebzc_save_payment]"
+                           id="<?php echo $_code; ?>_save_payment"
+                           title="<?php echo __('Save this bank information'); ?>" value="1"/>
+                </div>
+
+            <?php endif; ?>
+        </div>
+    </fieldset>
+    <!--ach block end-->
+</div>
+
+<script>
+
+    require(['jquery'], function ($) {
+
+        $('.ebzc_option').on('click ready', function () {
+            var inputValue = $(this).attr("value");
+            $('#ebzc_option_hidden').val(inputValue);
+        });
+
+        $('.ebizs_option').on('click ready change', function () {
+            if (this.value == 'credit_card') {
+                $('#ccBlock').show();
+                $('#achBlock').hide();
+                $('#cc_type').val('credit_card');
+
+            } else if (this.value == 'ACH') {
+
+                $('#ccBlock').hide();
+                $('#achBlock').show();
+                $('#cc_type').val('ACH');
+            }
+        });
+
+        $('input[type="radio"]').click(function () {
+            var inputValue = $(this).attr("value");
+            var ccTypeInput = $('#cc_type').val();
+
+
+            if ($(this).attr('id') == 'ebizs_option_ach') {
+                $('#ebzc_option_saved_ach').prop('checked', false);
+                $('#ebzc_option_new_ach').click();
+            }
+
+            if ($(this).attr('id') == 'ebizs_option') {
+                $('#ebzc_option_saved').prop('checked', false);
+                $('#ebzc_option_new').click();
+            }
+
+            if (inputValue == 'saved' && ccTypeInput == 'credit_card') {
+
+                $('#<?php echo $_code;?>' + '_ebzc_method_ach').removeAttr('name');
+                $('#achBlock :input').removeClass("required-entry");
+            }
+
+            if (inputValue == 'update' && ccTypeInput == 'credit_card') {
+                $('#<?php echo $_code;?>' + '_ebzc_method_ach').removeAttr('name');
+                $('#achBlock :input').removeClass("required-entry");
+            }
+
+            if (inputValue == 'saved' && ccTypeInput == 'ACH') {
+                $('#ccBlock :input').removeClass("required-entry");
+                $('#<?php echo $_code;?>' + '_ebzc_method_ach').attr("class", "input-text admin__control-text validate-cc-cvn");
+                $('#<?php echo $_code;?>' + '_ebzc_method_ach').attr("name", "payment[ebzc_method_id]");
+                $('#achBlock :input').removeClass("required-entry");
+            }
+
+            if (inputValue == 'new' && ccTypeInput == 'ACH') {
+                $('#ach_account').html('<input type="text" id="<?php echo $_code; ?>_cc_number_new_ach" name="payment[cc_number]" title="<?php echo __("Account Number"); ?>" class="input-text admin__control-text required-entry" />');
+
+                // add classes
+                $('#<?php echo $_code;?>' + '_cc_owner_new_ach').attr("class", "input-text admin__control-text validate-cc-owner required-entry");
+                //$('#<?php echo $_code;?>'+'_cc_number_new_ach').attr("class","input-text admin__control-text validate-cc-type");
+                $('#<?php echo $_code;?>' + '_routing_new_ach').attr("class", "input-text admin__control-text required-entry");
+
+                //add names
+                $('#<?php echo $_code;?>' + '_cc_owner_new_ach').attr("name", "payment[cc_owner]");
+                //$('#<?php echo $_code;?>'+'_cc_number_new_ach').attr("name", "payment[cc_number]");
+                $('#<?php echo $_code;?>' + '_routing_new_ach').attr("name", "payment[ach_routing]");
+
+                // remove classes
+                $('#<?php echo $_code;?>' + '_cc_owner_new').removeAttr('class');
+                $('#<?php echo $_code;?>' + '_cc_type_new').removeAttr('class');
+                $('#<?php echo $_code;?>' + '_cc_number_new').removeAttr('class');
+                $('#<?php echo $_code;?>' + '_expiration_new').removeAttr('class');
+                $('#<?php echo $_code;?>' + '_expiration_yr_new').removeAttr('class');
+                $('#<?php echo $_code;?>' + '_cc_cid_new').removeAttr('class');
+
+                //remove names
+                $('#<?php echo $_code;?>' + '_cc_owner_new').removeAttr('name');
+                $('#<?php echo $_code;?>' + '_cc_type_new').removeAttr('name');
+                $('#<?php echo $_code;?>' + '_cc_number_new').removeAttr('name');
+                $('#<?php echo $_code;?>' + '_expiration_new').removeAttr('name');
+                $('#<?php echo $_code;?>' + '_expiration_yr_new').removeAttr('name');
+                $('#<?php echo $_code;?>' + '_cc_cid_new').removeAttr('name');
+            }
+
+            if (inputValue == 'new' && ccTypeInput == 'credit_card') {
+                //remove class
+                $('#<?php echo $_code;?>' + '_cc_owner_new_ach').removeAttr('class');
+                $('#<?php echo $_code;?>' + 'cc_number_new_ach').removeAttr('class');
+                $('#<?php echo $_code;?>' + '_routing_new_ach').removeAttr('class');
+
+                //remove names
+                $('#<?php echo $_code;?>' + '_cc_owner_new_ach').removeAttr('name');
+                $('#<?php echo $_code;?>' + 'cc_number_new_ach').removeAttr('name');
+                $('#<?php echo $_code;?>' + '_routing_new_ach').removeAttr('name');
+
+                // add classes
+                $('#<?php echo $_code;?>' + '_cc_owner_new').attr("class", "input-text admin__control-text validate-cc-owner");
+                $('#<?php echo $_code;?>' + '_cc_type_new').attr("class", "select admin__control-select validate-cc-type-select");
+                $('#<?php echo $_code;?>' + '_cc_number_new').attr("class", "input-text admin__control-text validate-cc-number validate-cc-type");
+                $('#<?php echo $_code;?>' + '_expiration_new').attr("class", "month validate-cc-exp select admin__control-select");
+                $('#<?php echo $_code;?>' + '_expiration_yr_new').attr("class", "year select admin__control-select");
+                $('#<?php echo $_code;?>' + '_cc_cid_new').attr("class", "input-text admin__control-text validate-cc-cvn");
+
+                //add names
+                $('#<?php echo $_code;?>' + '_cc_owner_new').attr("name", "payment[cc_owner]");
+                $('#<?php echo $_code;?>' + '_cc_type_new').attr("name", "payment[cc_type]");
+                $('#<?php echo $_code;?>' + '_cc_number_new').attr("name", "payment[cc_number]");
+                $('#<?php echo $_code;?>' + '_expiration_new').attr("name", "payment[cc_exp_month]");
+                $('#<?php echo $_code;?>' + '_expiration_yr_new').attr("name", "payment[cc_exp_year]");
+                $('#<?php echo $_code;?>' + '_cc_cid_new').attr("name", "payment[cc_cid]");
+            }
+        });
+    });
+</script>
+
+<style>
+    .admin__payment-method-wrapper {
+        width: 90%;
+    }
+    .admin__payment-method-wrapper {
+        width: calc(65%);
+    }
+
+    #ebizcharge_ebizcharge_expiration_new {
+        width: 60%;
+    }
+
+    #ebizcharge_ebizcharge_expiration_yr_new {
+        width: 38%;
+    }
+
+    #ebizcharge_ebizcharge_expiration_update {
+        width: 60%;
+    }
+
+    #ebizcharge_ebizcharge_expiration_yr_update {
+        width: 38%;
+    }
+</style>

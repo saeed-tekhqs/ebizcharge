@@ -1,0 +1,23 @@
+<?php
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+
+/**
+ * @var $block \Ebizcharge\Ebizcharge\Override\Component\Control\Button
+ */
+?>
+<?php if ($block->ifEbizOrderGrid()): ?>
+<?= $css = $block->getCalendarCss(); ?>
+    <label class="label" for="ebiz-date-picker" style="margin:10px; font-weight:bold;">
+        <span>Start date</span>
+    </label>
+<?= $block->getDateInput(); ?>
+<?php else:  ?>
+    <?= $block->getBeforeHtml() ?>
+    <button <?= /* @noEscape */ $block->getAttributesHtml(), /* @noEscape */ $block->getUiId() ?>>
+        <span><?= $block->escapeHtml($block->getLabel()) ?></span>
+    </button>
+    <?= $block->getAfterHtml() ?>
+<?php endif; ?>

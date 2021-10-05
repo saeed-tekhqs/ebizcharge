@@ -1,0 +1,52 @@
+<?xml version="1.0"?>
+<!--
+/**
+* Defines default configurations for EBizCharge.
+*
+* @author      Century Business Solutions <support@centurybizsolutions.com>
+* @copyright   Copyright (c) 2020 Century Business Solutions  (www.centurybizsolutions.com)
+*/
+-->
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="../../../Magento/Store/etc/config.xsd">
+    <default>
+        <payment>
+            <ebizcharge_ebizcharge>
+                <active>0</active>
+                <model>EbizchargeFacade</model>
+				<title>EBizCharge</title>
+                <payment_action>sale</payment_action>
+                <is_gateway>1</is_gateway>
+                <can_use_checkout>1</can_use_checkout>
+                <can_authorize>1</can_authorize>
+                <can_capture>1</can_capture>
+                <can_sale>1</can_sale>
+                <can_capture_partial>1</can_capture_partial>
+                <can_use_internal>1</can_use_internal>
+                <can_refund_partial_per_invoice>1</can_refund_partial_per_invoice>
+                <can_refund>1</can_refund>
+                <can_void>1</can_void>
+                <can_cancel>1</can_cancel>
+                <can_edit>1</can_edit>
+                <can_review_payment>1</can_review_payment>
+                <can_deny_payment>1</can_deny_payment>
+                <cctypes>AE,VI,MC,DI,JCB</cctypes>
+                <recurring_frequency>weekly,monthly,quarterly,bi-annually,annually</recurring_frequency>
+                <allowspecific>0</allowspecific>
+                <min_order_total>0.50</min_order_total>
+                <order_status>pending_payment</order_status>
+                <save_payment>0</save_payment>
+				<recurring_payments>0</recurring_payments>
+                <uploadeconnect>0</uploadeconnect>
+                <downloadeconnect>0</downloadeconnect>
+                <group>ebizcharge_group</group>
+            </ebizcharge_ebizcharge>
+        </payment>
+		<default>
+        <dev>
+            <static>
+                <sign>0</sign>
+            </static>
+        </dev>
+    </default>
+    </default>
+</config>

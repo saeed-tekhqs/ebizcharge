@@ -1,0 +1,28 @@
+<?xml version="1.0"?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Backend:etc/menu.xsd">
+    <menu>
+        <add id="Ebizcharge_Ebizcharge::rec" title="Subscription" module="Ebizcharge_Ebizcharge" sortOrder="51"
+             resource="Ebizcharge_Ebizcharge::rec" dependsOnConfig="payment/ebizcharge_ebizcharge/active"/>
+
+        <add id="Ebizcharge_Ebizcharge::addSubscription" title="+ Add New Subscription" module="Ebizcharge_Ebizcharge"
+             sortOrder="8" action="ebizcharge_ebizcharge/recurrings/addaction" resource="Ebizcharge_Ebizcharge::rec"
+             parent="Ebizcharge_Ebizcharge::rec" dependsOnConfig="payment/ebizcharge_ebizcharge/active"/>
+
+        <add id="Ebizcharge_Ebizcharge::recurrings" title="Scheduled Subscriptions" module="Ebizcharge_Ebizcharge"
+             sortOrder="10" action="ebizcharge_ebizcharge/recurrings" resource="Ebizcharge_Ebizcharge::rec"
+             parent="Ebizcharge_Ebizcharge::addSubscription" dependsOnConfig="payment/ebizcharge_ebizcharge/active"/>
+
+        <add id="Ebizcharge_Ebizcharge::history" title="Subscriptions Payment History" module="Ebizcharge_Ebizcharge"
+             sortOrder="12" action="ebizcharge_ebizcharge/recurrings/history" resource="Ebizcharge_Ebizcharge::rec"
+             parent="Ebizcharge_Ebizcharge::recurrings" dependsOnConfig="payment/ebizcharge_ebizcharge/active"/>
+
+        <add id="Ebizcharge_Ebizcharge::search" title="Future Subscriptions Search" module="Ebizcharge_Ebizcharge"
+             sortOrder="14" action="ebizcharge_ebizcharge/recurrings/search" resource="Ebizcharge_Ebizcharge::rec"
+             parent="Ebizcharge_Ebizcharge::history" dependsOnConfig="payment/ebizcharge_ebizcharge/active"/>
+
+        <add id="Ebizcharge_Ebizcharge::orders" title="Recurring Orders" module="Ebizcharge_Ebizcharge"
+             sortOrder="15" action="ebizcharge_ebizcharge/recurrings/orders" resource="Ebizcharge_Ebizcharge::rec"
+             parent="Ebizcharge_Ebizcharge::search" dependsOnConfig="payment/ebizcharge_ebizcharge/active"/>
+    </menu>
+</config>

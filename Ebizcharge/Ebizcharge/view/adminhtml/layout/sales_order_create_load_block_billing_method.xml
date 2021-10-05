@@ -1,0 +1,20 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * @author Century Business Solutions <support@centurybizsolutions.com>
+ * @copyriht Copyright (c) 2021 Century Business Solutions  (www.centurybizsolutions.com)
+ * Created by PhpStorm
+ * User: Mobeen
+ * Date: 8/9/21
+ */
+-->
+<page xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/page_configuration.xsd">
+    <body>
+        <referenceBlock name="order.create.billing.method.form">
+            <action method="setMethodFormTemplate">
+                <argument name="method" xsi:type="const">Ebizcharge\Ebizcharge\Ui\ConfigProvider::CODE</argument>
+                <argument name="template" xsi:type="string">Ebizcharge_Ebizcharge::form/card.phtml</argument>
+            </action>
+        </referenceBlock>
+    </body>
+</page>

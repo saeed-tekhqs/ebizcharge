@@ -1,0 +1,142 @@
+<?php
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+
+// phpcs:disable Magento2.Templates.ThisInTemplate
+// @codingStandardsIgnoreFile
+
+/** @var \Magento\Sales\Block\Order\History $block */
+$_recurrings = $block->getRecurrings();
+$receiptRefNum = $block->getReceiptRefNumber();
+
+$fullUrl = $block->getRequest()->getUriString();
+$baseUrl = $block->getBaseUrl();
+$urlArray = explode($baseUrl, $fullUrl);
+$urlCurrent = 'ebizcharge/recurrings/historyaction/';
+
+?>
+<?= $block->getChildHtml('info') ?>
+<form class="form" id="reclist"
+      action="<?php echo $block->escapeUrl($block->getUrl('ebizcharge/recurrings/deleteaction')); ?>"
+      method="post">
+    <?php echo $block->getBlockHtml('formkey'); ?>
+
+    <?php if ($_recurrings && count($_recurrings)) : ?>
+
+        <div class="searchTabCustom">
+            <ul class="items order-links">
+                <li class="nav item" onclick="openPage('<?php echo $block->escapeUrl($block->getUrl('ebizcharge/recurrings/listaction/')); ?>')"><strong>Schedule Subscriptions</strong></li>
+                <li class="nav item current"><strong>Subscriptions Payment History</strong></li>
+            </ul>
+            <div id="msg" style="text-align: left;"></div>
+
+
+
+        </div>
+        <div class="searchDelCustom">
+
+            <input  type="text" name="search"  id="searchIn" value="" placeholder="Type any thing to search..." class="input-text" maxlength="128" >
+        </div>
+
+        <div class="table-wrapper orders-history clearAll" >
+            <table class="data table table-order-items history" id="myTable">
+                <caption class="table-caption"><?= $block->escapeHtml(__('Subscriptions')) ?></caption>
+                <thead>
+
+
+                <tr>
+
+                    <th scope="col" class="col total"><?= $block->escapeHtml(__('Amount')) ?></th>
+                    <th scope="col" class="col paymentdate"><?= $block->escapeHtml(__('Payment Date')) ?></th>
+                    <th scope="col" class="col card"><?= $block->escapeHtml(__('Card')) ?></th>
+                    <th scope="col" class="col authcode"><?= $block->escapeHtml(__('Auth Code')) ?></th>
+                    <th scope="col" class="col reference"><?= $block->escapeHtml(__('Reference')) ?></th>
+                    <th scope="col" class="col result"><?= $block->escapeHtml(__('Status')) ?></th>
+                    <th scope="col" class="col actions"><?= $block->escapeHtml(__('Actions')) ?></th>
+                </tr>
+                </thead>
+                <tbody id="myBody">
+
+                <input type="hidden" name="internal_id" id="internal_id">
+                <input type="hidden" name="receiptRefNum" id="receiptRefNum" value="<?php echo $receiptRefNum; ?>">
+
+
+                <?php foreach ($_recurrings as $recurring) :
+
+
+                    $authCode = (!empty($recurring->AuthCode) ? $recurring->AuthCode : 'N/A');
+
+                    ?>
+                    <tr>
+
+                        <td data-th="<?= $block->escapeHtml(__('Amount')) ?>" class="col startdate"><?= number_format($recurring->getData('paymentAmount'), 2); ?></td>
+                        <td data-th="<?= $block->escapeHtml(__('Payment Date')) ?>" class="col enddate"><?php echo $block->escapeHtml($recurring->getData('paymentDate')); ?></td>
+
+                        <td data-th="<?= $block->escapeHtml(__('Card')) ?>" class="col total"><?php echo $block->escapeHtml($recurring->getData('cardInfo')); ?></td>
+                        <td data-th="<?= $block->escapeHtml(__('Auth Code')) ?>" class="col detail"><?php echo $authCode; ?></td>
+                        <td data-th="<?= $block->escapeHtml(__('Reference')) ?>" class="col frequency"><?php echo $block->escapeHtml($recurring->getData('refNum')); ?></td>
+                        <td data-th="<?= $block->escapeHtml(__('Status')) ?>" class="col payment">
+                            <?php echo $recurring->getData('resultStatus'); ?>
+                            <?php if ($recurring->getData('resultStatus') == 'Declined') { ?>
+                                <div class="tooltip">&#9888;<span class="tooltiptext">Card has Expired</span></div>
+                            <?php } ?>
+
+                        </td>
+                        <td data-th="<?= $block->escapeHtml(__('Actions')) ?>" class="col actions">
+
+
+                            <ul>
+                                <li class="customer-welcome">
+								<span role="link" tabindex="0" data-mage-init='{"dropdown":{}}' data-toggle="dropdown"
+                                      data-trigger-keypress-button="true">
+                                    <a tabindex="-1" data-action="customer-menu-toggle">
+                                        <span><?php echo $block->escapeHtml(__('...')) ?></span>
+                                    </a>
+								</span>
+                                    <div data-target="dropdown">
+                                        <ul class="header links">
+                                            <li><a href="javascript:void()" class="print_btn"
+                                                   id="<?php echo $recurring->getData('refNum'); ?>">Print Receipt</a>
+                                            </li>
+                                            <li><a href="javascript:void()"
+                                                   id="<?php echo $recurring->getData('refNum'); ?>"
+                                                   data-id="<?php  echo $recurring->getData('customerEmail'); ?>" class="email_btn">Email
+                                                    Receipt</a>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </li>
+                            </ul>
+
+
+
+
+                        </td>
+                    </tr>
+                <?php endforeach; ?>
+                </tbody>
+            </table>
+        </div>
+
+        <?php if ($block->getPagerHtml()) : ?>
+            <div class="order-products-toolbar toolbar bottom"><?= $block->getPagerHtml() ?></div>
+        <?php endif ?>
+    <?php else : ?>
+        <div class="message info empty"><span><?= $block->escapeHtml($block->getEmptyOrdersMessage()) ?></span></div>
+    <?php endif ?>
+</form>
+<div id="myModel"></div>
+<div id="myModelConfirm"></div>
+<script type="text/x-magento-init">
+    {
+        "*": {
+            "Ebizcharge_Ebizcharge/js/recurring_search" : {}
+        }
+    }
+</script>
+
+
+
+

@@ -1,0 +1,131 @@
+{
+    "ebizcharge_token": {
+        "column": {
+            "token_id": true,
+            "mage_cust_id": true,
+            "ebzc_cust_id": true
+        },
+        "index": {
+            "EBIZCHARGE_TOKEN_MAGE_CUST_ID": true
+        },
+        "constraint": {
+            "PRIMARY": true
+        }
+    },
+    "ebizcharge_recurring_dates": {
+        "column": {
+            "id": true,
+            "recurring_id": true,
+            "recurring_date": true
+        },
+        "index": {
+            "EBIZCHARGE_RECURRING_DATES_RECURRING_ID": true
+        },
+        "constraint": {
+            "PRIMARY": true
+        }
+    },
+    "ebizcharge_recurring_order": {
+        "column": {
+            "id": true,
+            "recurring_id": true,
+            "recurring_date": true,
+            "rec_order_id": true,
+            "created_date": true,
+            "status": true,
+            "message": true,
+            "order_entity_id": true
+        },
+        "constraint": {
+            "PRIMARY": true
+        }
+    },
+    "ebizcharge_recurring": {
+        "column": {
+            "rec_id": true,
+            "rec_status": true,
+            "rec_indefinitely": true,
+            "mage_cust_id": true,
+            "mage_order_id": true,
+            "mage_item_id": true,
+            "mage_item_name": true,
+            "qty_ordered": true,
+            "eb_rec_start_date": true,
+            "eb_rec_end_date": true,
+            "eb_rec_frequency": true,
+            "eb_rec_method_id": true,
+            "eb_rec_scheduled_payment_internal_id": true,
+            "eb_rec_total": true,
+            "eb_rec_processed": true,
+            "eb_rec_next": true,
+            "eb_rec_remaining": true,
+            "eb_rec_due_dates": true,
+            "mage_parent_item_id": true,
+            "billing_address_id": true,
+            "shipping_address_id": true,
+            "amount": true,
+            "payment_method_name": true,
+            "shipping_method": true,
+            "failed_attempts": true,
+            "order_date": true
+        },
+        "constraint": {
+            "PRIMARY": true
+        }
+    },
+    "sales_order_payment": {
+        "column": {
+            "ebzc_option": true,
+            "ebzc_cust_id": true,
+            "ebzc_method_id": true,
+            "ebzc_avs_street": true,
+            "ebzc_avs_zip": true,
+            "ebzc_save_payment": true
+        }
+    },
+    "quote_payment": {
+        "column": {
+            "ebzc_option": true,
+            "ebzc_cust_id": true,
+            "ebzc_method_id": true,
+            "ebzc_avs_street": true,
+            "ebzc_avs_zip": true,
+            "ebzc_save_payment": true
+        }
+    },
+    "customer_entity": {
+        "column": {
+            "ec_cust_sync_status": true,
+            "ec_cust_internalid": true,
+            "ec_cust_id": true,
+            "ec_cust_token": true,
+            "ec_cust_lastsyncdate": true
+        }
+    },
+    "catalog_product_entity": {
+        "column": {
+            "ec_item_sync_status": true,
+            "ec_item_internalid": true,
+            "ec_item_id": true,
+            "ec_item_lastsyncdate": true
+        }
+    },
+    "sales_order": {
+        "column": {
+            "ec_order_sync_status": true,
+            "ec_order_internalid": true,
+            "ec_order_id": true,
+            "ec_cust_id": true,
+            "ec_order_lastsyncdate": true
+        }
+    },
+    "sales_invoice": {
+        "column": {
+            "ec_invoice_sync_status": true,
+            "ec_invoice_internalid": true,
+            "ec_invoice_id": true,
+            "ec_cust_id": true,
+            "ec_invoice_lastsyncdate": true
+        }
+    }
+}

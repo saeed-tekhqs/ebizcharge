@@ -1,0 +1,205 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * @author Century Business Solutions <support@centurybizsolutions.com>
+ * @copyriht Copyright (c) 2021 Century Business Solutions  (www.centurybizsolutions.com)
+ * Created by PhpStorm
+ * User: Mobeen
+ * Date: 4/9/21
+ * Time: 8:00 PM
+ */
+-->
+<schema xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="urn:magento:framework:Setup/Declaration/Schema/etc/schema.xsd">
+    <table name="ebizcharge_token" resource="default" engine="innodb" comment="Ebizcharge Gateway Token Table">
+        <column xsi:type="int" name="token_id" unsigned="true" nullable="false" identity="true"
+                comment="id"/>
+        <column xsi:type="int" name="mage_cust_id" unsigned="true" padding="11" nullable="false"
+                comment="Magento Customer ID"/>
+        <column xsi:type="int" name="ebzc_cust_id" unsigned="true" padding="11" nullable="false"
+                comment="EBizCharge Customer ID/Token"/>
+        <constraint xsi:type="primary" referenceId="PRIMARY">
+            <column name="token_id"/>
+        </constraint>
+        <index referenceId="EBIZCHARGE_TOKEN_MAGE_CUST_ID" indexType="btree">
+            <column name="mage_cust_id"/>
+        </index>
+    </table>
+    <table name="ebizcharge_recurring_dates" resource="default" engine="innodb" comment="Ebizcharge recurring_dates">
+        <column xsi:type="int" name="id" unsigned="true" nullable="false" identity="true"
+                comment="id"/>
+        <column xsi:type="int" name="recurring_id" unsigned="true" padding="11" nullable="false"
+                comment="recurring_id"/>
+        <column xsi:type="text" name="recurring_date" nullable="false"
+                comment="EBizCharge recurring date"/>
+        <constraint xsi:type="primary" referenceId="PRIMARY">
+            <column name="id"/>
+        </constraint>
+        <index referenceId="EBIZCHARGE_RECURRING_DATES_RECURRING_ID" indexType="btree">
+            <column name="recurring_id"/>
+        </index>
+    </table>
+    <table name="ebizcharge_recurring_order" resource="default" engine="innodb" comment="Ebizcharge recurring_dates">
+        <column xsi:type="int" name="id" unsigned="true" nullable="false" identity="true"
+                comment="id"/>
+        <column xsi:type="int" name="recurring_id" unsigned="true" padding="11" nullable="false"
+                comment="recurring_id"/>
+        <column xsi:type="int" name="recurring_date" padding="50" nullable="false"
+                comment="EBizCharge recurring date"/>
+        <column xsi:type="text" name="rec_order_id" nullable="true"
+                comment="EBizCharge recurring id"/>
+        <column xsi:type="timestamp" name="created_date" nullable="false"
+                comment="EBizCharge Order created date"/>
+        <column xsi:type="int" name="status" nullable="false"
+                comment="EBizCharge Order created status 0|1 "/>
+        <column xsi:type="text" name="message" nullable="false"
+                comment="message"/>
+        <column xsi:type="text" name="order_entity_id" nullable="true"
+                comment="Recurring order entity Id"/>
+        <constraint xsi:type="primary" referenceId="PRIMARY">
+            <column name="id"/>
+        </constraint>
+    </table>
+
+    <table name="ebizcharge_recurring" resource="default" engine="innodb" comment="Ebizcharge ebizcharge recurring">
+        <column xsi:type="int" name="rec_id" unsigned="true" nullable="false" identity="true"
+                comment="rec_id"/>
+        <column xsi:type="int" name="rec_status" unsigned="true" padding="11" nullable="true"
+                comment="Recurring Payment Status"/>
+        <column xsi:type="int" name="rec_indefinitely" unsigned="true" padding="11" nullable="true"
+                comment="Recurring Indefinitely"/>
+        <column xsi:type="text" name="mage_cust_id" nullable="true"
+                comment="Magento Customer ID"/>
+        <column xsi:type="text" name="mage_order_id" nullable="true"
+                comment="Magento Order ID"/>
+        <column xsi:type="text" name="mage_item_id" nullable="true"
+                comment="Magento Item ID"/>
+        <column xsi:type="text" name="mage_item_name" nullable="true"
+                comment="Item Name"/>
+        <column xsi:type="text" name="qty_ordered" nullable="true"
+                comment="Quantity Ordered"/>
+
+        <column xsi:type="timestamp" name="eb_rec_start_date" nullable="true"
+                comment="EBizCharge Recurring Start Date"/>
+        <column xsi:type="timestamp" name="eb_rec_end_date" nullable="true"
+                comment="EBizCharge Recurring End Date"/>
+        <column xsi:type="text" name="eb_rec_frequency" nullable="true"
+                comment="EBizCharge Recurring Frequency"/>
+        <column xsi:type="text" name="eb_rec_method_id" nullable="true"
+                comment="EBizCharge Recurring MethodId"/>
+
+        <column xsi:type="text" name="eb_rec_scheduled_payment_internal_id" nullable="true"
+                comment="EBizCharge Scheduled Payment InternalId"/>
+        <column xsi:type="int" name="eb_rec_total" padding="50" unsigned="false" nullable="true"
+                comment="Total Recurrings"/>
+        <column xsi:type="int" name="eb_rec_processed" padding="50" unsigned="false" nullable="true"
+                comment="Processed Recurrings"/>
+        <column xsi:type="timestamp" name="eb_rec_next" nullable="true"
+                comment="Next Recurring"/>
+
+        <column xsi:type="int" name="eb_rec_remaining" padding="11" unsigned="false" nullable="true"
+                comment="Remaining Recurrings"/>
+        <column xsi:type="text" name="eb_rec_due_dates" nullable="true"
+                comment="Recurring Due Dates"/>
+        <column xsi:type="text" name="mage_parent_item_id" nullable="true"
+                comment="Magento Parent Item ID"/>
+        <column xsi:type="int" name="billing_address_id" unsigned="true" nullable="true"
+                comment="Billing Address ID"/>
+        <column xsi:type="int" name="shipping_address_id" padding="11" unsigned="true" nullable="true"
+                comment="Shipping Address ID"/>
+        <column xsi:type="text" name="amount" nullable="true"
+                comment="Recurring amount"/>
+        <column xsi:type="text" name="payment_method_name" nullable="true"
+                comment="Recurring payment method name"/>
+        <column xsi:type="text" name="shipping_method" nullable="true"
+                comment="Subscription shipping method"/>
+        <column xsi:type="int" name="failed_attempts" padding="11" unsigned="true" nullable="false" default="0"
+                comment="Recurring order failed attempts"/>
+        <column xsi:type="text" name="order_date" nullable="true"
+                comment="Recurring order due date"/>
+
+        <constraint xsi:type="primary" referenceId="PRIMARY">
+            <column name="rec_id"/>
+        </constraint>
+    </table>
+
+    <table name="sales_order_payment" resource="default" engine="innodb">
+        <column xsi:type="text" name="ebzc_option" nullable="false"
+                comment="EBizCharge Payment Option"/>
+        <column xsi:type="int" name="ebzc_cust_id" unsigned="true" padding="11" nullable="false"
+                comment="EBizCharge Customer ID"/>
+        <column xsi:type="int" name="ebzc_method_id" padding="11" unsigned="true" nullable="false"
+                comment="EBizCharge Payment Method ID"/>
+        <column xsi:type="text" name="ebzc_avs_street" nullable="false"
+                comment="AVS Street"/>
+        <column xsi:type="text" name="ebzc_avs_zip" nullable="false"
+                comment="AVS Zip"/>
+        <column xsi:type="smallint" name="ebzc_save_payment" unsigned="true" nullable="false"
+                comment="EBizCharge - Save Payment Info"/>
+    </table>
+
+    <table name="quote_payment" resource="default" engine="innodb">
+        <column xsi:type="text" name="ebzc_option" nullable="false"
+                comment="EBizCharge Payment Option"/>
+        <column xsi:type="int" name="ebzc_cust_id" unsigned="true" padding="11" nullable="false"
+                comment="EBizCharge Customer ID"/>
+        <column xsi:type="int" name="ebzc_method_id" padding="11" unsigned="true" nullable="false"
+                comment="EBizCharge Payment Method ID"/>
+        <column xsi:type="text" name="ebzc_avs_street" nullable="false"
+                comment="AVS Street"/>
+        <column xsi:type="text" name="ebzc_avs_zip" nullable="false"
+                comment="AVS Zip"/>
+        <column xsi:type="smallint" name="ebzc_save_payment" unsigned="true" nullable="false"
+                comment="EBizCharge - Save Payment Info"/>
+    </table>
+
+    <table name="customer_entity" resource="default" engine="innodb">
+        <column xsi:type="text" name="ec_cust_sync_status" nullable="true"
+                comment="EEconnect Customer Sync Status"/>
+        <column xsi:type="text" name="ec_cust_internalid" nullable="true"
+                comment="Econnect Customer Internalid"/>
+        <column xsi:type="text" name="ec_cust_id" nullable="true"
+                comment="Econnect CustomerID"/>
+        <column xsi:type="text" name="ec_cust_token" nullable="true"
+                comment="Econnect Customer Token/Number"/>
+        <column xsi:type="timestamp" name="ec_cust_lastsyncdate" nullable="true" default="NULL"
+                comment="Econnect Customer Last Sync Date"/>
+    </table>
+
+    <table name="catalog_product_entity" resource="default" engine="innodb">
+        <column xsi:type="text" name="ec_item_sync_status" nullable="true"
+                comment="Econnect Item Sync Status"/>
+        <column xsi:type="text" name="ec_item_internalid" nullable="true"
+                comment="Econnect Item Internalid"/>
+        <column xsi:type="text" name="ec_item_id" nullable="true"
+                comment="Econnect ItemId"/>
+        <column xsi:type="timestamp" name="ec_item_lastsyncdate" nullable="true" default="NULL"
+                comment="Econnect Item Last Sync Date"/>
+    </table>
+
+    <table name="sales_order" resource="default" engine="innodb">
+        <column xsi:type="text" name="ec_order_sync_status" nullable="true"
+                comment="Econnect Order Sync Status"/>
+        <column xsi:type="text" name="ec_order_internalid" nullable="true"
+                comment="Econnect Order Internalid"/>
+        <column xsi:type="text" name="ec_order_id" nullable="true"
+                comment="Econnect OrderId"/>
+        <column xsi:type="text" name="ec_cust_id" nullable="true"
+                comment="Econnect CustId"/>
+        <column xsi:type="timestamp" name="ec_order_lastsyncdate" default="NULL" nullable="true"
+                comment="Econnect Order Last Sync Date"/>
+    </table>
+
+    <table name="sales_invoice" resource="default" engine="innodb">
+        <column xsi:type="text" name="ec_invoice_sync_status" nullable="true"
+                comment="Econnect Invoice Sync Status"/>
+        <column xsi:type="text" name="ec_invoice_internalid" nullable="true"
+                comment="Econnect Invoice Internalid"/>
+        <column xsi:type="text" name="ec_invoice_id" nullable="true"
+                comment="Econnect Invoice"/>
+        <column xsi:type="text" name="ec_cust_id" nullable="true"
+                comment="Econnect CustId"/>
+        <column xsi:type="timestamp" name="ec_invoice_lastsyncdate" default="NULL" nullable="true"
+                comment="Econnect Invoice Last Sync Date"/>
+    </table>
+</schema>

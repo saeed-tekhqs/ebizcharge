@@ -1,0 +1,555 @@
+<?php
+/**
+ * Displays a form to edit the credit card information
+ * for the selected saved payment method.
+ *
+ * @author      Century Business Solutions <support@centurybizsolutions.com>
+ * @copyright   Copyright (c) 2020 Century Business Solutions  (www.centurybizsolutions.com)
+ */
+$_code = 'payment';
+$requestCC = $block->getRequestCardCodeAdmin();
+$requestCC = ($requestCC == true) ? 1 : 0;
+?>
+<div id="container" class="main-col">
+    <form class=""
+          action="<?php echo $block->getUrl('ebizcharge_ebizcharge/recurrings/saveaction', ['_secure' => true]); ?>"
+          method="post" id="form-validate" enctype="multipart/form-data"
+          data-hasrequired="<?php echo __('* Required Fields'); ?>">
+        <div class="mainContainer">
+            <?php echo $block->getBlockHtml('formkey'); ?>
+            <input type="hidden" name="requestCC" id="requestCC" value="<?php echo $requestCC; ?>">
+            <input type="hidden" name="addressActionUrl" id="addressActionUrl" value="<?php echo $block->getUrl('ebizcharge_ebizcharge/recurrings/addressaction'); ?>">
+            <input type="hidden" name="loadCustomerUrl" id="loadCustomerUrl" value="<?php echo $block->getUrl('ebizcharge_ebizcharge/recurrings/loadcustomeraction'); ?>">
+            <input type="hidden" name="loadCustomerAddressUrl" id="loadCustomerAddressUrl" value="<?php echo $block->getUrl('ebizcharge_ebizcharge/recurrings/loadcustomeraddressaction'); ?>">
+            <div class="errormsgsdiv">
+                <span class="errormsgs" id="product_msg">Please select a product.</span>
+                <span class="errormsgs" id="product_qty">Please select product quantity.</span>
+                <span class="errormsgs" id="customer_msg">Please select a customer.</span>
+            </div>
+            <input type="hidden" name="payment_method_name" id="payment_method_name"/>
+
+            <div class="fr-main">
+                <div class="fr-left">Select Product</div>
+                <div class="fr-right">
+                    <select name="product_id" class="select admin__control required chosen" id="selectdivProduct"
+                            style="width: 50%" data-validate="{required:true}">
+                        <option value=''>Please Select Product</option>
+                        <?php echo $block->getAllItemsList(); ?>
+                    </select>
+
+                </div>
+            </div>
+
+            <div class="fr-main">
+                <div class="fr-left">Select Quantity</div>
+                <div class="fr-right">
+                    <input type="text" class="qtyWidth required" name="qty" id="qty" value="" pattern="\d*"
+                           minlength="1" maxlength="3">
+                </div>
+            </div>
+
+            <div class="fr-main">
+                <div class="fr-left">Select Customer</div>
+                <div class="fr-right">
+                    <select name="customer_id" class="select required chosen" id="selectdivCustomer"
+                            style="width: 50%" data-validate="{required:true}">
+                        <option value="" disabled selected>Please Select Customer</option>
+                        <?php echo $block->getAllActiveCustomersList(); ?>
+                    </select>
+                </div>
+            </div>
+
+            <p class="border"></p>
+            <div class="fr-main">
+                <button type="button" class="action" id="address_btn" data-trigger="trigger">
+                    <span data-bind="i18n: 'Add Address'"></span>
+                </button>
+            </div>
+            <div class="fr-main">
+                <div class="fr-left">Billing Address</div>
+                <div class="fr-right">
+                    <select name="addressBill" class="admin__control-select" style="width: 50%; margin-left: 17px;"
+                            id="addressBill" data-validate="{required:true}">
+                        <option value="">Select Billing Address</option>
+                    </select>
+                </div>
+            </div>
+            <div class="fr-main">
+                <div class="fr-left">Shipping Address</div>
+                <div class="fr-right">
+                    <select name="addressShip" class="admin__control-select" style="width: 50%" id="addressShip"
+                            data-validate="{required:true}">
+                        <option value="">Select Shipping Address</option>
+                    </select>
+                </div>
+            </div>
+
+            <p class="border"></p>
+            <div class="recUpdate" style="clear: both;">
+                <div id="Frecheck" style="color: red;"></div>
+                <span class="errormsgs" id="Frecheckempty">Please select frequency.</span>
+                <span class="errormsgs" id="Frechecksdate">Please select valid start date.</span>
+
+                <div class="fr-main">
+                    <div class="fr-left">Frequency</div>
+                    <div class="fr-right">
+                        <select name="schedule" id="freqId" class="admin__control-select" style="width: 220px;"
+                                data-validate="{required:true}">
+                            <option value="">Please select frequency</option>
+                            <?php $block->getConfiguredFrequencies(); ?>
+                        </select>
+                    </div>
+                </div>
+
+                <fieldset id="dates">
+                    <div class="start">
+                        <label class="label" for="start_date"><span><?php echo __('Start Date'); ?></span></label>&nbsp;&nbsp;
+                        <input type="text" class="dateclass" class="input-text required-entry hasDatepicker"
+                               title="<?php /* @escapeNotVerified */
+                               echo __('Start Date'); ?>" name="start_date" id="start_date"
+                               value="<?php if (isset($start)) {
+                                   echo $start;
+                               } ?>" data-input="start_date" autocomplete="off" data-validate="{required:true}"
+                               placeholder="YYYY-MM-DD"/>
+                    </div>
+
+                    <div class="end">
+                        <label class="label" for="expire_date"><span><?php echo __('End Date'); ?></span></label>
+                        <input type="text" class="dateclass" class="input-text required-entry"
+                               title="<?php /* @escapeNotVerified */
+                               echo __('End Date'); ?>" name="expire_date" id="expire_date"
+                               value="<?php if (isset($expire)) {
+                                   echo $expire;
+                               } ?>" data-input="expire_date" autocomplete="off" data-validate="{required:true}"
+                               placeholder="YYYY-MM-DD"/>
+                    </div>
+                </fieldset>
+
+                <fieldset id="indefinately">
+                    <div class="field required indefinately">
+                        <label class="label" for="indefinately">
+                            <?php echo __('Recur Indefinitely'); ?>
+                        </label>
+                        <input type="checkbox" id="rec_indefinitely" name="rec_indefinitely" value="1">
+                    </div>
+                </fieldset>
+
+            </div>
+
+            <p class="border"></p>
+            <span class="errormsgs" id="shipping_empty">Please select shipping method.</span>
+
+            <div class="fr-main">
+                <div class="fr-left">Shipping Method</div>
+                <div class="fr-right">
+                    <select name="shipping_method" class="admin__control-select" id="shippingMethod"
+                            style="width: 50%" data-validate="{required:true}">
+                        <?php echo $block->getShippingMethods(); ?>
+                    </select>
+                </div>
+            </div>
+
+            <span class="errormsgs" id="payment_empty">Please select payment method.</span>
+
+            <div class="fr-main">
+                <div class="fr-left">Payment Method</div>
+                <div class="fr-right">
+                    <select name="method_id" class="admin__control-select" id="selectdivPayment" style="width: 50%"
+                            data-validate="{required:true}">
+                        <option value="">Please select payment method</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="new-payment">
+                <div class="new-payment-left">Add New Payment Method</div>
+                <div class="new-payment-right">
+                    <input type="checkbox" class="checkbox control-checkbox
+                        " name="payment[add_new]" id="options_add_new" value="1" data-selector="payment[add_new]">
+                </div>
+            </div>
+
+            <div class="new-payment" id="payop" style="margin-top: 7px; margin-left: 10px">
+                <input type="hidden" name="ebiz_option" id="ebiz_option" value="credit_card"/>
+                <div class="row" id="my-select-content" style="padding-bottom: 10px; border-bottom: 1px solid silver">
+                    <input type="radio" name="payment[ebzc_option_type]" id="ebizs_option" value="credit_card"
+                           class="validate-one-required-by-name ebizs_option" checked/>
+                    <label for="ebizs_option" class="label">
+                        <span>Pay by Card</span>
+                    </label>
+
+                    <input style="margin-left: 15px" type="radio" name="payment[ebzc_option_type]" id="ebizs_option_ach"
+                           value="ACH" class="validate-one-required-by-name ebizs_option"/>
+                    <label for="ebizs_option_ach" class="label">
+                        <span>Pay by Bank </span>
+                    </label>
+                </div>
+            </div>
+
+            <div class="add-new" id="add-new">
+                <fieldset class="admin__fieldset">
+                    <span style="color: red; display: none;" id="payment_msg">All fields are required.</span>
+                    <span style="color: red; display: none;" id="payment_msgcNum">Please enter valid card number.</span>
+                    <span style="color: red; display: none;" id="payment_msgCvv">Please enter CVV between 3 and 4 digits.</span>
+                    <div class="admin__field-option _required">
+                        <label class="label admin__field-label" for="<?php echo $_code; ?>_cc_owner_new">
+                            <span class="required"><?php echo __('Name on Card'); ?></span>
+                        </label>
+                        <div class="admin__field-control control">
+                            <input type="text" id="<?php echo $_code; ?>_cc_owner_new"
+                                   name="<?php echo $_code; ?>[cc_owner]" title="<?php echo __('Name on Card'); ?>"
+                                   class="input-text required" value=""/>
+                        </div>
+                    </div>
+
+                    <div class="admin__field-option _required">
+                        <label class="label admin__field-label" for="<?php echo $_code; ?>_cc_number_new">
+                            <span class="required"><?php echo __('Credit Card Number'); ?></span>
+                        </label>
+                        <div class="admin__field-control control">
+                            <input type="text" id="<?php echo $_code; ?>_cc_number_new"
+                                   name="<?php echo $_code; ?>[cc_number]"
+                                   title="<?php echo __('Credit Card Number'); ?>"
+                                   class="input-text control-text required-entry" value="" pattern="\d*"
+                                   minlength="15" maxlength="20"/>
+                        </div>
+                    </div>
+                    <div class="admin__field-option _required">
+                        <label class="label admin__field-label" for="<?php echo $_code; ?>_cc_type_new">
+                            <span class="required"><?php echo __('Credit Card Type'); ?></span>
+                        </label>
+                        <div class="admin__field-control control">
+                            <select id="<?php echo $_code; ?>_cc_type_new" name="<?php echo $_code; ?>[cc_type]"
+                                    class="required-entry select control-select">
+
+                                <option value=""><?php echo __('Please Select Card Type'); ?></option>
+                                <?php $_ccType = $block->getInfoData('cc_type'); ?>
+                                <?php foreach ($block->getCcAvailableTypes() as $_typeCode => $_typeName): ?>
+
+                                    <option value="<?php echo $_typeCode; ?>"<?php if ($_typeCode == $_ccType): ?> selected="selected"<?php endif; ?>><?php echo $_typeName; ?></option>
+
+                                <?php endforeach ?>
+
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="admin__field-option _required" id="<?php echo $_code; ?>_cc_exp_new">
+                        <label class="label admin__field-label" for="<?php echo $_code; ?>_exp_new">
+                            <span class="required"><?php echo __('Expiration Date'); ?></span>
+                        </label>
+                        <div class="admin__field-control control">
+                            <select id="<?php echo $_code; ?>_exp_new" name="<?php echo $_code; ?>[cc_exp_month]"
+                                    class="month required-entry select control-select">
+                                <?php $_ccExpMonth = $block->getInfoData('cc_exp_month'); ?>
+                                <?php foreach ($block->getCcMonths() as $k => $v) { ?>
+
+                                    <option value="<?php echo $k ? $k : ''; ?>"<?php if ($k == $_ccExpMonth): ?> selected="selected"<?php endif; ?>><?php echo $v; ?></option>
+
+                                <?php } ?>
+                            </select>
+
+                            <?php $_ccExpYear = $block->getInfoData('cc_exp_year'); ?>
+
+                            <select id="<?php echo $_code; ?>_exp_yr_new" name="<?php echo $_code; ?>[cc_exp_year]"
+                                    class="year required-entry select control-select">
+
+                                <?php foreach ($block->getCcYears() as $k => $v) { ?>
+
+                                    <option value="<?php echo $k ? $k : ''; ?>"<?php if ($k == $_ccExpYear): ?> selected="selected"<?php endif; ?>><?php echo $v; ?></option>
+
+                                <?php } ?>
+                            </select>
+
+                        </div>
+                    </div>
+
+                    <?php if ($requestCC) { ?>
+                        <div class="admin__field-option _required">
+                            <label class="label admin__field-label" for="<?php echo $_code; ?>_cc_cid_new">
+                                <span class="required"><?php echo __('CVV'); ?></span>
+                            </label>
+                            <div class="admin__field-control control">
+                                <input type="text" id="<?php echo $_code; ?>_cc_cid_new"
+                                       name="<?php echo $_code; ?>[cc_cid]"
+                                       title="<?php echo __('Card Verification Number'); ?>" style="width: 50px;"
+                                       pattern="\d*" minlength="3" maxlength="4"/>
+                            </div>
+                        </div>
+                    <?php } ?>
+
+                    <div class="admin__field-option _required">
+                        <label class="label admin__field-label" for="<?php echo $_code; ?>_avs_street_new">
+                            <span class="required"><?php echo __('Avs Street'); ?></span>
+                        </label>
+                        <div class="admin__field-control control">
+                            <input type="text" id="<?php echo $_code; ?>_avs_street_new"
+                                   name="<?php echo $_code; ?>[avs_street]" title="<?php echo __('Avs Street'); ?>"
+                                   class="input-text required" value=""/>
+                        </div>
+                    </div>
+
+                    <div class="admin__field-option _required">
+                        <label class="label admin__field-label" for="<?php echo $_code; ?>_avs_zip_new">
+                            <span class="required"><?php echo __('Avs Zip'); ?></span>
+                        </label>
+                        <div class="admin__field-control control">
+                            <input type="text" id="<?php echo $_code; ?>_avs_zip_new"
+                                   name="<?php echo $_code; ?>[avs_zip]" title="<?php echo __('Avs Zip'); ?>"
+                                   class="input-text required" value=""/>
+                        </div>
+                    </div>
+
+                </fieldset>
+            </div>
+            <div class="add-new" id="add-new-ach" style="display: none;">
+                <fieldset class="admin__fieldset">
+                    <span style="color: red; display: none;" id="payment_msg_ach">All fields are required.</span>
+                    <span style="color: red; display: none;" id="payment_msgcNumAch">The account number should be between 9 and 14 digits.</span>
+                    <span style="color: red; display: none;" id="payment_msgcNumRoutAch">Please enter valid 9 digit routing number.</span>
+
+                    <div class="admin__field-option _required">
+                        <label class="label admin__field-label" for="<?php echo $_code; ?>_cc_owner_new_ach">
+                            <span class="required"><?php echo __('Account Holder'); ?></span>
+                        </label>
+                        <div class="admin__field-control control">
+                            <input type="text" id="<?php echo $_code; ?>_cc_owner_new_ach"
+                                   name="<?php echo $_code; ?>[cc_owner_ach]"
+                                   title="<?php echo __('Account Holder'); ?>"
+                                   class="input-text required" value=""/>
+                        </div>
+                    </div>
+
+                    <div class="admin__field-option _required">
+                        <label class="label admin__field-label" for="<?php echo $_code; ?>_cc_type_new_ach">
+                            <span class="required"><?php echo __('Account Type'); ?></span>
+                        </label>
+                        <div class="admin__field-control control">
+                            <select id="<?php echo $_code; ?>_cc_type_new_ach" name="<?php echo $_code; ?>[cc_type_ach]"
+                                    class="required-entry select control-select">
+                                <option value="checking">Checking</option>
+                                <option value="savings">Savings</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="admin__field-option _required">
+                        <label class="label admin__field-label" for="<?php echo $_code; ?>_cc_number_new_ach">
+                            <span class="required"><?php echo __('Account Number'); ?></span>
+                        </label>
+                        <div class="admin__field-control control">
+                            <input type="text" id="<?php echo $_code; ?>_cc_number_new_ach"
+                                   name="<?php echo $_code; ?>[cc_number_ach]"
+                                   title="<?php echo __('Account Number'); ?>"
+                                   class="input-text required" value=""/>
+                        </div>
+                    </div>
+
+                    <div class="admin__field-option _required">
+                        <label class="label admin__field-label" for="<?php echo $_code; ?>_cc_cid_new_ach">
+                            <span class="required"><?php echo __('Routing Number'); ?></span>
+                        </label>
+                        <div class="admin__field-control control">
+                            <input type="text" id="<?php echo $_code; ?>_cc_cid_new_ach"
+                                   name="<?php echo $_code; ?>[cc_routing_ach]"
+                                   title="<?php echo __('Routing Number'); ?>"/>
+                        </div>
+                    </div>
+                </fieldset>
+            </div>
+
+            <div class="actions-toolbar">
+                <div class="primary">
+					<button type="button" id="" class="action primary save_btn"
+                            title="<?php echo __('Save Subscription'); ?>">
+                        <span><?php echo __('Save Subscription'); ?></span>
+                    </button>
+                    <button type="button" class="new-cancel-btn" id="new-cancel-btn" onclick="goBack()">
+                        <span>Cancel</span>
+                    </button>
+                </div>
+            </div>
+
+    </form>
+</div>
+
+<div id="myModelConfirmDel"></div>
+<div id="myModel"></div>
+<div id="myModelConfirm"></div>
+
+<div id="optionsAddress" class="containerAddresss">
+    <form id="myForm" method="post">
+        <input type="hidden" name="customerIdAddress" id="customerIdAddress"/>
+        <fieldset class="fieldset">
+            <legend class="legend"><span>Contact Information</span></legend>
+            <div class="rowAddress">
+                <div class="column">
+                    <span>First Name</span>
+                    <div class="control">
+                        <input type="text" id="firstname" name="ship_first_name" value="" title="First Name"
+                               class=" input-text admin__control-text" data-validate="{required:true}"
+                               aria-required="true">
+                    </div>
+                </div>
+                <div class="column">
+                    <span>Last Name</span>
+                    <div class="control">
+                        <input type="text" id="lastname" name="ship_last_name" value="" title="Last Name"
+                               class=" input-text admin__control-text" data-validate="{required:true}"
+                               aria-required="true">
+                    </div>
+                </div>
+            </div>
+
+            <div class="rowAddress">
+                <div class="column">
+                    <span>Company</span>
+                    <div class="control">
+                        <input type="text" name="ship_company" id="company" value="" title="Company"
+                               class=" input-text admin__control-text ">
+                    </div>
+                </div>
+                <div class="column">
+                    <span>Phone Number</span>
+                    <div class="control">
+                        <input type="text" name="ship_phone" id="telephone" value="" title="Phone Number"
+                               class=" input-text admin__control-text" aria-required="true">
+                    </div>
+                </div>
+            </div>
+
+        </fieldset>
+        <fieldset class="fieldset">
+            <legend class="legend"><span>Address Information</span></legend>
+            <div class="rowAddress">
+                <div class="column">
+                    <span>Street Address</span>
+                    <div class="control">
+                        <input type="text" name="ship_address1" title="Street Address" id="street_1"
+                               class=" input-text admin__control-text" aria-required="true">
+                    </div>
+                </div>
+                <div class="column">
+                    <span>Street Address 2</span>
+                    <div class="control">
+                        <input type="text" name="ship_address2" title="Street Address 2" id="street_2"
+                               class=" input-text admin__control-text" aria-required="true">
+                    </div>
+                </div>
+            </div>
+            <div class="rowAddress">
+                <div class="column">
+                    <span>City</span>
+                    <div class="control">
+                        <input type="text" name="ship_city" value="" title="City" class="input-text admin__control-text"
+                               id="city" aria-required="true">
+                    </div>
+                </div>
+                <div class="column">
+                    <span>State/Province</span>
+                    <div class="control">
+                        <select id="region_id" name="ship_region" title="State/Province"
+                                class="input-text admin__control-text admin__control-select" defaultvalue="0"
+                                aria-required="true">
+                            <option value="">Please select a region, state or province.</option>
+                            <option value="1">Alabama</option>
+                            <option value="2">Alaska</option>
+                            <option value="3">American Samoa</option>
+                            <option value="4">Arizona</option>
+                            <option value="5">Arkansas</option>
+                            <option value="6">Armed Forces Africa</option>
+                            <option value="7">Armed Forces Americas</option>
+                            <option value="8">Armed Forces Canada</option>
+                            <option value="9">Armed Forces Europe</option>
+                            <option value="10">Armed Forces Middle East</option>
+                            <option value="11">Armed Forces Pacific</option>
+                            <option value="12">California</option>
+                            <option value="13">Colorado</option>
+                            <option value="14">Connecticut</option>
+                            <option value="15">Delaware</option>
+                            <option value="16">District of Columbia</option>
+                            <option value="17">Federated States Of Micronesia</option>
+                            <option value="18">Florida</option>
+                            <option value="19">Georgia</option>
+                            <option value="20">Guam</option>
+                            <option value="21">Hawaii</option>
+                            <option value="22">Idaho</option>
+                            <option value="23">Illinois</option>
+                            <option value="24">Indiana</option>
+                            <option value="25">Iowa</option>
+                            <option value="26">Kansas</option>
+                            <option value="27">Kentucky</option>
+                            <option value="28">Louisiana</option>
+                            <option value="29">Maine</option>
+                            <option value="30">Marshall Islands</option>
+                            <option value="31">Maryland</option>
+                            <option value="32">Massachusetts</option>
+                            <option value="33">Michigan</option>
+                            <option value="34">Minnesota</option>
+                            <option value="35">Mississippi</option>
+                            <option value="36">Missouri</option>
+                            <option value="37">Montana</option>
+                            <option value="38">Nebraska</option>
+                            <option value="39">Nevada</option>
+                            <option value="40">New Hampshire</option>
+                            <option value="41">New Jersey</option>
+                            <option value="42">New Mexico</option>
+                            <option value="43">New York</option>
+                            <option value="44">North Carolina</option>
+                            <option value="45">North Dakota</option>
+                            <option value="46">Northern Mariana Islands</option>
+                            <option value="47">Ohio</option>
+                            <option value="48">Oklahoma</option>
+                            <option value="49">Oregon</option>
+                            <option value="50">Palau</option>
+                            <option value="51">Pennsylvania</option>
+                            <option value="52">Puerto Rico</option>
+                            <option value="53">Rhode Island</option>
+                            <option value="54">South Carolina</option>
+                            <option value="55">South Dakota</option>
+                            <option value="56">Tennessee</option>
+                            <option value="57">Texas</option>
+                            <option value="58">Utah</option>
+                            <option value="59">Vermont</option>
+                            <option value="60">Virgin Islands</option>
+                            <option value="61">Virginia</option>
+                            <option value="62">Washington</option>
+                            <option value="63">West Virginia</option>
+                            <option value="64">Wisconsin</option>
+                            <option value="65">Wyoming</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <div class="rowAddress">
+
+                <div class="column">
+                    <span>Zip/Postal Code</span>
+                    <div class="control">
+                        <input type="text" name="ship_zipcode" value="" title="Zip/Postal Code" id="zip"
+                               class="input-text admin__control-text" aria-required="true">
+                    </div>
+                </div>
+                <div class="column">
+                    <span>Country</span>
+                    <div class="control">
+                        <select name="ship_country" id="country"
+                                class="input-text admin__control-text admin__control-select" title="Country"
+                                data-validate="{'validate-select':true}" aria-required="true">
+                            <option value="US" selected="selected">United States</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+        </fieldset>
+    </form>
+</div>
+<div id="optionsAddressAlert"></div>
+<script type="text/x-magento-init">
+    {
+        "*": {
+            "Ebizcharge_Ebizcharge/js/susbscription" : {}
+        }
+    }
+</script>

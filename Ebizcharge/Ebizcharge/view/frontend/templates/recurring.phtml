@@ -1,0 +1,752 @@
+<?php
+/**
+ * Displays a form to add billing address and credit card information
+ * for a new credit card.
+ *
+ * @author      Century Business Solutions <support@centurybizsolutions.com>
+ * @copyright   Copyright (c) 2020 Century Business Solutions  (www.centurybizsolutions.com)
+ */
+
+/**
+ * Recurring form template
+ *
+ * @var $block \Ebizcharge\Ebizcharge\Block\Form\Recurring
+ */
+$getLoggedInCustomerId = $block->getLoggedInCustomerId();
+
+$product = $block->getParentBlock()->getProduct();
+
+$currentProductId = $product->getId();
+// configurable, simple, grouped, virtual or downloadable
+$currentProductType = $product->getTypeId();
+$cartItemID = '';
+if (!empty($this->getRequest()->getParam('id'))) {
+	$cartItemID = $this->getRequest()->getParam('id');
+}
+
+$cartProductID = '';
+if (!empty($this->getRequest()->getParam('product_id'))) {
+	$cartProductID = $this->getRequest()->getParam('product_id');
+}
+
+$sendDbUpdate = 0;
+if ((!empty($this->getRequest()->getParam('id'))) && (!empty($this->getRequest()->getParam('product_id')))) {
+	$sendDbUpdate = 1;
+}
+
+if ($block->showRecurringForm()) {
+?>
+	<div class="product-options-wrapper recurring-options-wrapper" id="product-options-wrapper" data-hasrequired="* Required Fields">
+		<div class="fieldset" tabindex="0">
+			<div class="field activate" id="activate">
+				<div class="control">
+					<div class="options-list nested" id="options-rec-activate">
+
+						<div class="field choice admin__field admin__field-option">
+							<input type="radio" class="radio admin__control-radio product-custom-option
+                        " id="options_rec_activate_false" name="recurring[rec_activate]" value="0" data-selector="options[rec_activate]" checked>
+							<label class="label admin__field-label" for="options_rec_activate_false">One time purchase</label>
+						</div>
+
+						<div class="field choice admin__field admin__field-option">
+							<input type="radio" class="radio admin__control-radio product-custom-option
+                        " id="options_rec_activate" name="recurring[rec_activate]" value="1" data-selector="options[rec_activate]">
+							<label class="label admin__field-label" for="options_rec_activate">Subscribe to product(s)</label>
+						</div>
+					</div>
+				</div>
+			</div>
+
+			<div class="field frequency required" id="frequency">
+				<label class="label" for="select_rec_frequency"><span>Frequency</span></label>
+				<div class="control">
+					<select name="recurring[rec_frequency]" id="select_rec_frequency" class="required product-custom-option admin__control-select" title="" data-selector="options[rec_frequency]" aria-required="true" style="width:auto">
+						<option value="">Choose a Frequency</option>
+                        <?php $block->getConfiguredFrequencies(); ?>
+					</select>
+				</div>
+			</div>
+
+			<div class="field dates" id="dates">
+				<div class="field date left required">
+					<fieldset class="fieldset fieldset-product-options-inner required">
+						<div class="dates-start">
+							<legend class="legend" style="margin-bottom: 4px;">
+								<span>Start Date</span>
+							</legend>
+							<div class="control">
+								<input type="text" autocomplete="off" id="rec_sdate" name="recurring[sdate]" class="required product-custom-option admin__control-select date-picker rec_sdate" value="" data-selector="recurring[sdate]" placeholder="YYYY-MM-DD" aria-required="true"/>
+							</div>
+						</div>
+					</fieldset>
+				</div>
+
+				<div class="field date right">
+					<fieldset class="fieldset fieldset-product-options-inner">
+						<legend class="legend">
+							<span>End Date</span>
+						</legend>
+						<div class="control">
+							<input type="text" autocomplete="off" id="rec_edate" name="recurring[edate]" class="product-custom-option admin__control-select date-picker rec_edate" value="" data-selector="recurring[edate]" placeholder="YYYY-MM-DD"/>
+						</div>
+						<div style="display: none;" for="invalid-date-error" generated="true" class="mage-error" id="invalid-date-error">Please select valid dates.</div>
+					</fieldset>
+				</div>
+			</div>
+
+			<div class="field indefinitely" id="indefinitely">
+				<div class="control">
+					<div class="options-list nested" id="options-rec-indefinitely">
+						<div class="field choice admin__field admin__field-option">
+							<input type="checkbox" class="checkbox admin__control-checkbox product-custom-option
+                        " name="recurring[rec_indefinitely]" id="options_rec_indefinitely" value="1" data-selector="recurring[rec_indefinitely]">
+							<label class="label admin__field-label" for="options_rec_indefinitely">
+                				<span>Recur indefinitely</span>
+                            </label>
+						</div>
+					</div>
+				</div>
+			</div>
+            <div id="rec_message" class="control" style="color: #2a62bc">
+                Please select the start date when you want to receive the next subscription. You will receive the shipment for today date as well.
+            </div>
+		</div>
+
+	</div>
+
+<div id="error-popup-modal" class="error-popup-modal" style="display: none;">
+	Recurring against this product already exists between selected dates. Please choose other date or edit existing recurring in <br>
+	<strong>(My Account -> Manage Subscriptions)</strong>.
+</div>
+<div style="display: none;">
+	<a href="#" id="dateError">Click Me</a>
+</div>
+<!-- data-mage-init='{"myjs": {}}'-->
+<div id="error-popup-modal-exist" class="error-popup-modal-exist" style="display: none;">
+	This product already added to the cart. Please choose other product or update this product in the cart.
+</div>
+<div style="display: none;">
+	<a href="#" id="dateErrorExist">Click Me</a>
+</div>
+
+<input type="hidden" id="currentpid" name="currentpid"/>
+
+<style>
+.left {
+	width: 40%;
+	float: left;
+}
+.indefinitely {
+	clear: both;
+}
+.recurring-options-wrapper {
+	background: #f4f4f4;
+	padding: 10px;
+	margin: 0 0 20px 0;
+}
+.recurring-options-wrapper.fieldset {
+	margin-bottom: 0;
+}
+.date-picker {width: 165px !important;}
+.modal-inner-wrap {
+    width: 500px !important;
+}
+.control {
+    width: 100% !important;
+}
+
+.product-add-form .product-options-wrapper .field .control {
+    width: 100%;
+  }
+
+#rec_sdate {
+	margin-right: 0;
+}
+
+#rec_edate {
+	margin-right: 0;
+}
+
+.ui-datepicker-trigger.v-middle {
+    margin: -3px 0 0 -28px !important;
+}
+
+.ui-datepicker-trigger {
+    margin: -3px 0 0 -28px !important;
+}
+
+#modal-content-1 {
+    width: 440px;
+}
+
+#rec_sdate-error {
+    position: absolute;
+	margin: 3px 0;
+}
+
+.field-error, div.mage-error[generated] {
+    margin-top: 2px;
+}
+
+input[type="radio"] {
+    margin: 4px 5px 0 0;
+}
+
+</style>
+
+<script>
+require(['jquery'], function ($)
+{
+	$('#frequency').hide();
+	$('#dates').hide();
+	$('#indefinitely').hide();
+	$('#rec_message').hide();
+	$("#options_rec_activate_false").attr('checked', true);
+	$("#invalid-date-error").css("display", "none");
+	//let ischeckBoxChecked = $('#options_rec_activate').is(":checked");
+
+	$("input[name='recurring[rec_activate]']").click(function()
+	 {
+		var selectedRadioVal = "";
+		var selectedRadio = $("input[type='radio'][name='recurring[rec_activate]']:checked");
+		if (selectedRadio.length > 0)
+		{
+			selectedRadioVal = selectedRadio.val();
+		}
+
+		if(selectedRadioVal == 1){
+		    //console.log("Active checkbox is checked.");
+			$('#select_rec_frequency').val('');
+			$('#rec_sdate').val('');
+			$('#rec_edate').val('');
+			$('#options_rec_indefinitely').prop('checked', false); // Unchecks it
+
+			$('#frequency').show();
+			$('#dates').show();
+			$('#indefinitely').show();
+			$('#rec_message').show();
+		}
+		else if(selectedRadioVal == 0){
+			$('#frequency').hide();
+			$('#dates').hide();
+			$('#indefinitely').hide();
+			$('#rec_message').hide();
+			$('#product-addtocart-button').prop( "disabled", false );
+		}
+	});
+
+	$('#options_rec_indefinitely').click(function(){
+		if($(this).prop("checked") == true){
+		    //console.log("Indefinitely checkbox is checked.");
+			$('#rec_edate').prop( "disabled", true );
+		}
+		else if($(this).prop("checked") == false){
+			//console.log("Indefinitely checkbox is unchecked.");
+			$('#rec_edate').prop( "disabled", false );
+		}
+	});
+
+	$('#rec_sdate').click(function(){
+		$('#product-addtocart-button').prop( "disabled", false );
+		$('#product-updatecart-button').prop( "disabled", false );
+		$("#rec_sdate").attr("autocomplete", "off");
+	});
+
+	$('#rec_edate').click(function(){
+		$('#product-addtocart-button').prop( "disabled", false );
+		$('#product-updatecart-button').prop( "disabled", false );
+		$("#rec_edate").attr("autocomplete", "off");
+	});
+
+	$(document).click(function() {
+		$('#product-addtocart-button').prop( "disabled", false );
+		$('#product-updatecart-button').prop( "disabled", false );
+	});
+
+	$('#options_rec_activate_false').click(function(){
+		$('#product-addtocart-button').prop( "disabled", false );
+		$('#product-updatecart-button').prop( "disabled", false );
+		$("#invalid-date-error").css("display", "none");
+	});
+
+	$('#product-addtocart-button').click(function(e)
+	{
+		if ($("#options_rec_activate").prop("checked") == true)
+		{
+			if ($('#select_rec_frequency').val() == '' || $('#rec_sdate').val() == '')
+			{
+				$('#product_addtocart_form').submit();
+				$('#product-addtocart-button').prop( "disabled", true );
+				return false;
+			}
+
+            if($('#options_rec_indefinitely').prop("checked") == false && ($('#rec_sdate').val() == '' || $('#rec_edate').val() == '')){
+                $("#invalid-date-error").css("display", "block");
+                return false;
+            }
+		}
+
+		//------------ for valid dates Start ----------------
+		var days = 0;
+		var frequency = $( "#select_rec_frequency" ).val();
+		var sdate  = $( "#rec_sdate" ).val();
+		var edate  = $( "#rec_edate" ).val();
+
+        days = getDaysFromFrequency(frequency);
+
+		var frequencyDays = days;
+		const startDate  = sdate;
+		const endDate    = edate;
+
+		const diffInMs   = new Date(endDate) - new Date(startDate)
+		const diffInDays = diffInMs / (1000 * 60 * 60 * 24);
+
+		if ((endDate != '') && ($('#options_rec_indefinitely').prop("checked") == false))
+		{
+			if(Math.round(diffInDays) < Math.round(frequencyDays) )
+			{
+				$("#invalid-date-error").css("display", "block");
+				return false;
+			}
+		}
+
+		//------------ for valid dates End ----------------
+
+		//------------ for existing recurrings check Start ----------------
+		var currentProductType = '<?php echo $currentProductType; ?>';
+		var currentParentProductId = '<?php echo $currentProductId; ?>';
+		var currentSelectedProductId = $('#currentpid').val();
+
+		switch (currentProductType)
+		{
+			case "configurable":
+				var productId = currentSelectedProductId;
+				var productParentId = currentParentProductId;
+				break;
+			case "grouped":
+				var productId = currentSelectedProductId;
+				var productParentId = currentParentProductId;
+				break;
+			default:
+				var productId = currentParentProductId;
+				var productParentId = currentParentProductId;
+		}
+
+		var newSdate = $('#rec_sdate').val();
+
+		$.ajax({
+				method: "POST",
+				url: "<?php echo $block->getUrl('ebizcharge/recurrings/productaction'); ?>",
+				data: {
+					productid: productId,
+					productparentid: productParentId,
+					customerId: "<?php echo $getLoggedInCustomerId; ?>",
+					newSdate: newSdate
+				},
+				async:false,
+				dataType: "json",
+				showLoader: true,
+				beforeSend:function()
+				{
+					e.preventDefault();
+					$('#product-addtocart-button').prop( "disabled", true );
+				},
+				success: function (data)
+				{
+					if ( data.html_data !== undefined )
+					{
+						switch(data.html_data)
+						{
+						  case 'exist':
+							$('#product-addtocart-button').prop( "disabled", false );
+							$("#dateErrorExist").click();
+							break;
+						  case 'disable':
+							$('#product-addtocart-button').prop( "disabled", true );
+							$("#dateError").click();
+							break;
+						  case 'enable':
+							$('#product-addtocart-button').prop( "disabled", false );
+							$('#product_addtocart_form').submit();
+							break;
+						  default:
+							$('#product-addtocart-button').prop( "disabled", false );
+							$('#product_addtocart_form').submit();
+						}
+					}
+					else
+					{
+						$('#product-addtocart-button').prop( "disabled", false );
+						$('#product_addtocart_form').submit();
+					}
+				},
+				complete:function()
+				{
+					//alert("Request completed");
+				}
+			})
+		//------------ for existing recurrings check End ----------------
+	});
+
+	$('#product-updatecart-button').click(function(e)
+	{
+		//------------ for valid dates Start ----------------
+		var frequencyu = $( "#select_rec_frequency" ).val();
+		var sdateu  = $( "#rec_sdate" ).val();
+		var edateu  = $( "#rec_edate" ).val();
+
+        var daysu = getDaysFromFrequency(frequencyu);
+
+		var frequencyDaysu = daysu;
+		const startDateu  = sdateu;
+		const endDateu    = edateu;
+
+		const diffInMsu   = new Date(endDateu) - new Date(startDateu)
+		const diffInDaysu = diffInMsu / (1000 * 60 * 60 * 24);
+
+		if ((endDateu != '') && ($('#options_rec_indefinitely').prop("checked") == false))
+		{
+			if(Math.round(diffInDaysu) < Math.round(frequencyDaysu) )
+			{
+			    $("#product_addtocart_form").on('submit', function(e){
+					$("#invalid-date-error").css("display", "block");
+				    e.preventDefault();
+			  	});
+			}
+		}
+
+		//------------ for valid dates End ----------------
+		//------------ for existing recurrings check Start ----------------
+		var currentProductTypeu = '<?php echo $currentProductType; ?>';
+		var currentParentProductIdu = '<?php echo $currentProductId; ?>';
+		var currentSelectedProductIdu = $('#currentpid').val();
+
+		switch (currentProductTypeu)
+		{
+			case "configurable":
+				var productIdu = currentSelectedProductIdu;
+				var productParentIdu = currentParentProductIdu;
+				break;
+			case "grouped":
+				var productIdu = currentSelectedProductIdu;
+				var productParentIdu = currentParentProductIdu;
+				break;
+			default:
+				var productIdu = currentParentProductIdu;
+				var productParentIdu = currentParentProductIdu;
+		}
+
+		var newSdateu = $('#rec_sdate').val();
+		if (($("#options_rec_activate").is(":checked") == false) || !newSdateu)
+		{
+			if (<?php echo $sendDbUpdate; ?> == 1)
+			{
+				//---------- for db update start -------------
+				do_adddb.history(0,'','','');
+				//---------- for db update end -------------
+			}
+			$('#product-updatecart-button').prop( "disabled", false );
+		}
+		else
+		{
+			$.ajax( {
+				method: "POST",
+				url: "<?php echo $block->getUrl('ebizcharge/recurrings/productupdateaction'); ?>",
+				data: {
+					productidu: productIdu,
+					productparentidu: productParentIdu,
+					customerIdu: "<?php echo $getLoggedInCustomerId; ?>",
+					newSdateu: newSdateu
+				},
+				async:false,
+				dataType: "json",
+				showLoader: true,
+				beforeSend:function(){
+					e.preventDefault();
+					$('#product-updatecart-button').prop( "disabled", true );
+				},
+				success: function (data)
+				{
+					if ( data.html_data !== undefined )
+					{
+						if(data.html_data == 'enable')
+						{
+							//$('#product-updatecart-button').prop( "disabled", false );
+							if (<?php echo $sendDbUpdate; ?> == 1)
+							{
+								//---------- for db update start -------------
+								var active  = $("#options_rec_activate").is(":checked") ? 1 : 0;
+								var frequency = $("#select_rec_frequency" ).val();
+								var sdate  = $("#rec_sdate" ).val();
+								var edate  = $("#rec_edate" ).val();
+								do_adddb.history(active,frequency,sdate,edate);
+								//---------- for db update end -------------
+							}
+							//$('#product_addtocart_form').submit();
+						}
+						else if(data.html_data == 'disable')
+						{
+							if (<?php echo $sendDbUpdate; ?> == 1)
+							{
+								//---------- for db update start -------------
+								do_adddb.history(0,'','','');
+								//---------- for db update end -------------
+							}
+							$("#product_addtocart_form").on('submit', function(e)
+							{
+								$('#product-updatecart-button').prop( "disabled", true );
+								$("#dateError").click();
+								e.preventDefault();
+								return false;
+							});
+						}
+						// ajax request for the above two condition
+					}
+					else
+					{
+						//$('#product-updatecart-button').prop( "disabled", false );
+						if (<?php echo $sendDbUpdate; ?> == 1)
+							{
+								//---------- for db update start -------------
+								do_adddb.history(0,'','','');
+								//---------- for db update end -------------
+							}
+							//$('#product_addtocart_form').submit();
+					}
+
+				},
+				complete:function()
+				{
+					//alert("Request completed");
+				}
+
+			})
+
+		}
+
+		//------------ for existing recurrings check End ----------------
+
+	});
+
+	function getDaysFromFrequency(frequency) {
+        let days = 0;
+	    switch (frequency)
+        {
+            case "daily":
+                days = 1;
+                break;
+            case "weekly":
+                days = 7;
+                break;
+            case "bi-weekly":
+            case "bi-monthly":
+                days = 14;
+                break;
+            case "four-week":
+                days = 28;
+                break;
+            case "monthly":
+                days = 30;
+                break;
+            case "two-month":
+                days = 60;
+                break;
+            case "quarterly":
+            case "three-month":
+            case "90-days":
+                days = 90;
+                break;
+            case "four-month":
+                days = 120;
+                break;
+            case "five-month":
+                days = 150;
+                break;
+            case "bi-annually":
+            case "six-month":
+            case "180-days":
+                days = 180;
+                break;
+            case "annually":
+                days = 365;
+                break;
+            default:
+                days = 30;
+        }
+        return days;
+    }
+
+});
+
+require(['jquery'], function(jQuery)
+{
+     do_adddb = {
+        history: function (active,frequency,sdate,edate){
+			var qty  = jQuery("#qty" ).val();
+			var cartItemID  = "<?php echo $cartItemID; ?>";
+			var cartProductID  = "<?php echo $cartProductID; ?>";
+
+			jQuery.ajax( {
+					method: "POST",
+					url: "<?php echo $block->getUrl('ebizcharge/recurrings/productupdatedbaction'); ?>",
+					data: {
+						active: active,
+						frequency: frequency,
+						sdate: sdate,
+						edate: edate,
+						qty: qty,
+						cartItemID: cartItemID,
+						cartProductID: cartProductID
+					},
+					async:false,
+					dataType: "json",
+					showLoader: true,
+					beforeSend:function(){
+						//alert("Request completed");
+					},
+					success: function (data)
+					{
+						//alert("updated to db");
+					},
+					complete:function()
+					{
+						//alert("Request completed");
+					}
+
+				})
+			//---------- for db update end -------------
+        }
+    }
+});
+
+// For popup modal existing recurring
+require(
+	[
+		'jquery',
+		'Magento_Ui/js/modal/modal'
+	],
+	function($,modal)
+	{
+		var options = {
+			type: 'popup',
+			responsive: true,
+			innerScroll: true,
+			buttons: [{
+				text: $.mage.__('Continue'),
+				class: 'error-popup-modal',
+				click: function () {
+					$('#product-addtocart-button').prop( "disabled", false );
+					this.closeModal();
+
+				}
+			}]
+		};
+
+		var popup = modal(options, $('#error-popup-modal'));
+		$("#dateError").on('click',function()
+		{
+			$("#error-popup-modal").modal("openModal");
+		});
+
+	}
+);
+
+// For popup modal existing item in cart
+require(
+	[
+		'jquery',
+		'Magento_Ui/js/modal/modal'
+	],
+	function($,modal)
+	{
+		var optionsUpdate = {
+			type: 'popup',
+			responsive: true,
+			innerScroll: true,
+			buttons: [{
+				text: $.mage.__('Continue'),
+				class: 'error-popup-modal-exist',
+				click: function () {
+					$('#product-updatecart-button').prop( "disabled", false );
+					this.closeModal();
+
+				}
+			}]
+		};
+
+		var popup = modal(optionsUpdate, $('#error-popup-modal-exist'));
+		$("#dateErrorExist").on('click',function()
+		{
+			$("#error-popup-modal-exist").modal("openModal");
+		});
+	}
+);
+
+// For date selection
+require([
+    'jquery',
+    'mage/mage',
+    'mage/calendar'
+], function($) {
+
+    let minDate = new Date();
+    minDate.setDate(minDate.getDate() + 1);
+
+    $('#dates').dateRange({
+        buttonText: '',
+		dateFormat: 'Y-mm-dd',
+		minDate: minDate,
+        from: {
+            id: 'rec_sdate'
+        },
+        to: {
+            id: 'rec_edate'
+        }
+    });
+
+});
+
+require(['jquery','underscore'], function($,_)
+	{
+	$( ".product-options-wrapper div" ).click(function() {
+		if($('div.swatch-attribute').html())
+		{
+			selpro();
+		}
+	});
+
+    function selpro () {
+        var selected_options = {};
+        $('div.swatch-attribute').each(function(k,v)
+		{
+            var attribute_id    = $(v).attr('data-attribute-id');
+            var option_selected = $(v).attr('data-option-selected');
+
+            if(!attribute_id || !option_selected)
+			{
+				return;
+			}
+            selected_options[attribute_id] = option_selected;
+        });
+
+        var product_id_index = $('[data-role=swatch-options]').data('mageSwatchRenderer').options.jsonConfig.index;
+
+        var found_ids = [];
+
+		function productIsSelected (attributes, selected_options)
+		{
+			return _.isEqual(attributes, selected_options);
+		}
+
+        $.each(product_id_index, function(product_id,attributes)
+		{
+            if(productIsSelected(attributes, selected_options)){
+                found_ids.push(product_id);
+            }
+        });
+		$('#currentpid').val(found_ids);
+    }
+
+});
+</script>
+<?php } ?>

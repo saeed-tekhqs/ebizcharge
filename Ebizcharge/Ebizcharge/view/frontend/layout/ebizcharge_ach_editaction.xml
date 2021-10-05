@@ -1,0 +1,30 @@
+<?xml version="1.0"?>
+<!--
+/**
+* Declares the block and sets the template for the Cards/EditAction controller.
+*
+* @author      Century Business Solutions <support@centurybizsolutions.com>
+* @copyright   Copyright (c) 2020 Century Business Solutions  (www.centurybizsolutions.com)
+*/
+-->
+<page xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/page_configuration.xsd">
+    <update handle="customer_account"/>
+    <body>
+		<referenceBlock name="head.components">
+            <block class="Magento\Framework\View\Element\Js\Components" name="customer_account_edit_head_components" template="Magento_Customer::js/components.phtml"/>
+        </referenceBlock>
+        <referenceBlock name="page.main.title">
+            <action method="setPageTitle">
+                <argument translate="true" name="title" xsi:type="string">Edit Bank Account</argument>
+            </action>
+        </referenceBlock>
+        <referenceBlock name="customer_account_navigation">
+            <action method="setActive">
+                <argument name="path" xsi:type="string">ebizcharge/cards/listaction</argument>
+            </action>
+        </referenceBlock>
+        <referenceContainer name="content">
+            <block class="Ebizcharge\Ebizcharge\Block\Customer\Account\ACH" name="ebizcharge.ach.addcard" cacheable="false" template="ach_edit.phtml" />
+        </referenceContainer>
+    </body>
+</page>

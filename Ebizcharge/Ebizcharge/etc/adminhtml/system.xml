@@ -1,0 +1,207 @@
+<?xml version="1.0"?>
+<!--
+/**
+* Administrative settings for Ebizcharge_Ebizcharge. You can find these at:
+* Stores->Configuration->Sales->Payment Methods.
+*
+* @author      Century Business Solutions <support@centurybizsolutions.com>
+* @copyright   Copyright (c) 2020 Century Business Solutions (www.centurybizsolutions.com)
+*/
+-->
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Config:etc/system_file.xsd">
+    <system>
+        <section id="payment">
+            <group id="ebizcharge_ebizcharge" translate="label" type="text" sortOrder="251" showInDefault="1" showInWebsite="1" showInStore="1">
+                <label>EBizCharge</label>
+                <comment><![CDATA[Allows the processing of credit card payments via the <a href="http://www.ebizcharge.com/">EBizCharge Gateway</a>. You must generate a Security Id in your merchant console.]]></comment>
+                <field id="active" translate="label" type="select" sortOrder="1" showInDefault="1" showInWebsite="1" showInStore="0">
+                    <label>Enabled</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                    <comment><![CDATA[EBizCharge Developer 2.4.2]]></comment>
+                </field>
+                <field id="title" translate="label" type="text" sortOrder="2" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Title</label>
+                </field>
+                <field id="sourcekey" translate="label" type="text" sortOrder="3" showInDefault="1" showInWebsite="1" showInStore="0">
+                    <label>Security Id</label>
+                </field>
+                <field id="sourceid" translate="label" type="text" sortOrder="4" showInDefault="1" showInWebsite="1" showInStore="0">
+                    <label>User Id</label>
+                </field>
+                <field id="sourcepin" translate="label" type="text" sortOrder="5" showInDefault="1" showInWebsite="1" showInStore="0">
+                    <label>Password</label>
+                    <comment><![CDATA[Must match the Password assigned to your Security Id. If no Password is set, leave blank.]]></comment>
+                </field>
+                <field id="enableAch" translate="label" type="select" sortOrder="1" showInDefault="1" showInWebsite="1" showInStore="0">
+                    <label>Enable ACH</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                </field>
+                <field id="recurring_payments" translate="label" type="select" sortOrder="5" showInDefault="1" showInWebsite="1" showInStore="0">
+                    <label>Enable Recurring Payments</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+					<depends>
+						<field id="active">1</field>
+					</depends>
+                </field>
+                <field id="recurring_frequency" translate="label" type="multiselect" sortOrder="6" showInDefault="1" showInWebsite="1" showInStore="0">
+                    <label>Allowed Recurring Frequencies</label>
+                    <source_model>Ebizcharge\Ebizcharge\Model\Source\Frequency</source_model>
+                    <tooltip>
+                        TWICE PER MONTH: Twice per month on the 1st and 15th of every month.
+                        QUARTERLY: Every quarter on the 1st in January, April, July and October.
+                        TWICE PER YEAR: Every 6 month on the 1st in January and July.
+                    </tooltip>
+                </field>
+                <!--<field id="request_card_code" translate="label" type="select" sortOrder="6" showInDefault="1" showInWebsite="1" showInStore="0">
+                    <label>Request Card Code</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                </field>-->
+                <field id="request_card_code_admin" translate="label" type="select" sortOrder="7" showInDefault="1" showInWebsite="1" showInStore="0">
+                    <label>Required Card Code (Admin)</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                </field>
+                <field id="description" translate="label" type="text" sortOrder="8" showInDefault="1" showInWebsite="1" showInStore="0">
+                    <label>Transaction Description</label>
+                    <comment><![CDATA[By default "Magento Order #1235". To include the Order ID in the description, use "[orderid]". For example, "[My Store Order #[orderid]".]]></comment>
+                </field>
+                <!--<field id="custreceipt" translate="label" type="select" sortOrder="9" showInDefault="1" showInWebsite="1" showInStore="0">
+                    <label>Send Customer Receipt</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                    <comment><![CDATA[Set to "Yes" if you want EBizCharge to send the customer a receipt. This is not the same as the receipt sent by Magento. If you also have Magento configured to send a receipt, the customer will receive two receipts.]]></comment>
+                </field>
+                <field id="custreceipt_template" translate="label" type="text" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="0">
+                    <label>Receipt Template</label>
+                    <comment><![CDATA[Leave blank to use the default customer receipt template, or enter the name of a custom receipt created in the EBizCharge Merchant Console.]]></comment>
+                </field>
+                <field id="order_status" translate="label" type="select" sortOrder="11" showInDefault="1" showInWebsite="1" showInStore="0">
+                    <label>New Order Status</label>
+                    <source_model>Magento\Sales\Model\Config\Source\Order\Status\Processing</source_model>
+                </field>-->
+				<!--<field id="order_status" translate="label" type="select" sortOrder="11" showInDefault="1" showInWebsite="1" showInStore="0">
+                    <label>New Order Status</label>
+                    <source_model>Magento\Sales\Model\ResourceModel\Order\Status\Collection</source_model>
+                </field>-->
+                <field id="payment_action" translate="label" type="select" sortOrder="13" showInDefault="1" showInWebsite="1" showInStore="0">
+                    <label>Payment Action</label>
+                    <source_model>Ebizcharge\Ebizcharge\Model\Source\PaymentAction</source_model>
+                    <comment><![CDATA[Select which sale method to use, Authorize Only will authorize the customer's card for the purchase amount only. Authorize and Capture will authorize the customer's card and collect funds.]]></comment>
+                </field>
+				<field id="sort_order" translate="label" type="text" sortOrder="14" showInDefault="1" showInWebsite="1" showInStore="0">
+                    <label>Sort Order</label>
+                </field>
+                <field id="cctypes" translate="label" type="multiselect" sortOrder="15" showInDefault="1" showInWebsite="1" showInStore="0">
+                    <label>Credit Card Types</label>
+                    <source_model>Ebizcharge\Ebizcharge\Model\Source\CcType</source_model>
+                </field>
+                <field id="currency" translate="label" type="select" sortOrder="16" showInDefault="1" showInWebsite="1" showInStore="0">
+                    <label>Accepted Currency</label>
+                    <source_model>Magento\Config\Model\Config\Source\Locale\Currency</source_model>
+                </field>
+                <field id="allowspecific" translate="label" type="allowspecific" sortOrder="17" showInDefault="1" showInWebsite="1" showInStore="0">
+                    <label>Payment from Applicable Countries</label>
+                    <source_model>Magento\Payment\Model\Config\Source\Allspecificcountries</source_model>
+                </field>
+                <field id="specificcountry" translate="label" type="multiselect" sortOrder="18" showInDefault="1" showInWebsite="1" showInStore="0">
+                    <label>Payment from Specific Countries</label>
+                    <source_model>Magento\Directory\Model\Config\Source\Country</source_model>
+                </field>
+                <field id="min_order_total" translate="label" type="text" sortOrder="19" showInDefault="1" showInWebsite="1" showInStore="0">
+                    <label>Minimum Order Total</label>
+                </field>
+                <field id="max_order_total" translate="label" type="text" sortOrder="20" showInDefault="1" showInWebsite="1" showInStore="0">
+                    <label>Maximum Order Total</label>
+                    <comment><![CDATA[Leave empty to disable limit.]]></comment>
+                </field>
+                <field id="save_payment" translate="label" type="select" sortOrder="21" showInDefault="1" showInWebsite="1" showInStore="0">
+                    <label>Automatically Save Payment Methods During Checkout</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                </field>
+                <field id="error_msg" translate="label" type="text" sortOrder="23" showInDefault="1" showInWebsite="1" showInStore="0">
+                    <label>Error Message</label>
+                    <comment><![CDATA[Appended before the actual error message from the gateway.]]></comment>
+                </field>
+                <field id="itemssyncsetting" translate="label" type="select" sortOrder="24" showInDefault="1" showInWebsite="1" showInStore="0">
+                    <label>Item Source</label>
+                    <source_model>Ebizcharge\Ebizcharge\Model\Config\ItemsMethod</source_model>
+                    <comment><![CDATA[Select whether you use Magento as your source for items and you need to uplaod your items to the EBizCharge hub or whether you use an ERP as your item source and need to download items from your ERP and import them into Magento.]]></comment>
+                </field>
+                <field id="uploadeconnect" translate="label" type="select" sortOrder="25" showInDefault="1" showInWebsite="1" showInStore="0">
+                    <label>Enable Upload Options</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                    <comment><![CDATA[This allows you to upload your customers, invoices and sales orders to the EBizCharge hub so they can appear and be accessed in the EBizCharge Customer Payment Portal, mobile app, your ERP or other connected software.]]></comment>
+                </field>
+                <field id="synccustomers" translate="label" sortOrder="26" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Upload Customers</label>
+                    <frontend_model>Ebizcharge\Ebizcharge\Block\System\Config\Form\Button</frontend_model>
+                    <comment><![CDATA[Step1: Press to Upload all customers to EBizCharge Connect. This might take several minutes.]]></comment>
+                    <depends>
+                        <field id="uploadeconnect">1</field>
+                    </depends>
+                </field>
+                <field id="syncitems" translate="label" sortOrder="27" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Upload Items</label>
+                    <frontend_model>Ebizcharge\Ebizcharge\Block\System\Config\Form\Button</frontend_model>
+                    <comment><![CDATA[Step2: Press to Upload all items to EBizCharge Connect. This might take several minutes.]]></comment>
+                    <depends>
+                        <field id="itemssyncsetting">upload</field>
+                        <field id="uploadeconnect">1</field>
+                    </depends>
+                </field>
+                <field id="syncorders" translate="label" sortOrder="28" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Upload Orders</label>
+                    <frontend_model>Ebizcharge\Ebizcharge\Block\System\Config\Form\Button</frontend_model>
+                    <comment><![CDATA[Step3: Press to Upload all Orders to EBizCharge Connect. This might take several minutes.]]></comment>
+                    <depends>
+                        <field id="uploadeconnect">1</field>
+                    </depends>
+                </field>
+                <field id="syncinvoices" translate="label" sortOrder="29" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Upload Invoices</label>
+                    <frontend_model>Ebizcharge\Ebizcharge\Block\System\Config\Form\Button</frontend_model>
+                    <comment><![CDATA[Step4: Press to Upload all invoices to EBizCharge Connect. This might take several minutes.]]></comment>
+                    <depends>
+                        <field id="uploadeconnect">1</field>
+                    </depends>
+                </field>
+                <field id="downloadeconnect" translate="label" type="select" sortOrder="30" showInDefault="1" showInWebsite="1" showInStore="0">
+                    <label>Enable Download Options</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                    <comment><![CDATA[If this is enabled, any customers, products, or order created outside of Magento (like in the Customer Payment Portal, mobile app and ERP) can also be downloaded/imported into Magento by clicking the download buttons.]]></comment>
+                </field>
+                <field id="shippingmethod" translate="label" type="select" sortOrder="31" showInDefault="1" showInWebsite="1" showInStore="0">
+                    <label>Choose Shipping Method</label>
+                    <source_model>Ebizcharge\Ebizcharge\Model\Config\allshippingmethods</source_model>
+                    <comment><![CDATA[Please choose default shipping method for download orders.]]></comment>
+                    <depends>
+                        <field id="downloadeconnect">1</field>
+                    </depends>
+                </field>
+                <field id="downloadcustomers" translate="label" sortOrder="32" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Download Customers</label>
+                    <frontend_model>Ebizcharge\Ebizcharge\Block\System\Config\Form\Button</frontend_model>
+                    <comment><![CDATA[Step1: Press to Download all customers from EBizCharge Connect. This might take several minutes.]]></comment>
+                    <depends>
+                        <field id="downloadeconnect">1</field>
+                    </depends>
+                </field>
+                <field id="downloaditems" translate="label" sortOrder="33" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Download Items</label>
+                    <frontend_model>Ebizcharge\Ebizcharge\Block\System\Config\Form\Button</frontend_model>
+                    <comment><![CDATA[Step2: Press to Download all items from EBizCharge Connect. This might take several minutes.]]></comment>
+                    <depends>
+                        <field id="itemssyncsetting">download</field>
+                        <field id="downloadeconnect">1</field>
+                    </depends>
+                </field>
+                <field id="downloadorders" translate="label" sortOrder="34" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Download Orders</label>
+                    <frontend_model>Ebizcharge\Ebizcharge\Block\System\Config\Form\Button</frontend_model>
+                    <comment><![CDATA[Step3: Press to Download all Orders from EBizCharge Connect. This might take several minutes.]]></comment>
+                    <depends>
+                        <field id="downloadeconnect">1</field>
+                    </depends>
+                </field>
+            </group>
+        </section>
+    </system>
+</config>

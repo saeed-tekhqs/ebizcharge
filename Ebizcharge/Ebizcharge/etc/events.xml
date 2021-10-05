@@ -1,0 +1,19 @@
+<?xml version="1.0"?>
+<!--
+/**
+* @author Century Business Solutions <support@centurybizsolutions.com>
+* @copyriht Copyright (c) 2021 Century Business Solutions  (www.centurybizsolutions.com)
+* Created by PhpStorm
+* User: Mobeen
+* Date: 7/21/21
+* Time: 9:28 PM
+*/
+-->
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:Event/etc/events.xsd">
+    <event name="sales_quote_payment_import_data_before">
+        <observer name="add_additional_data_observer" instance="Ebizcharge\Ebizcharge\Observer\AddAdditionalDataObserver"/>
+    </event>
+    <event name="payment_method_assign_data_ebizcharge_ebizcharge">
+        <observer name="ebizcharge_ebizcharge_gateway_data_assign" instance="Ebizcharge\Ebizcharge\Observer\DataAssignObserver" />
+    </event>
+</config>

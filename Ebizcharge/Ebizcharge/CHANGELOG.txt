@@ -1,0 +1,202 @@
+Plugin Name: Magento2 EBizCharge Gateway
+Plugin URI: https://www.ebizcharge.com/
+Description: Accept all major credit cards directly on your Magento2 site in a seamless and secure checkout environment with EBizCharge.
+Compatible with Version: 2.4.2
+Author: EBizCharge
+Author URI: http://ebizcharge.com
+License: Apache 2
+A Product of: Century Business Solutions
+
+Here are lattest commits for the ebizcharge plugin updates.
+
+== Changelog ==
+
+What's new in version 2.4.2 and Commit 23? Updated on 05.04.2021
+
+1- Admin new subscription added.
+2- Shipping addresses shown in subscriptions.
+3- Subscribed credit card deletion checks.
+4- Cron issues fixed.
+
+-----------------------------------------------------------
+
+What's new in version 2.3.5 and Commit 22? Updated on 11.04.2020
+
+1- Recurring items functionility added.
+2- Recurring items stock cron job notifications.
+3- Recurring order create cron jobs.
+
+-----------------------------------------------------------
+
+What's new in version 2.3.5 and Commit 21? Updated on 1.10.2020
+
+1- Build 2.3.5 updated.
+2- GetCustomerToken are shifted to GetCustomer.
+3- AddApplicationTransaction request parameters added.
+
+-----------------------------------------------------------
+
+What's new in version 2.3.5 and Commit 20? Updated on 15.09.2020
+
+1- Build 2.3.5 updated.
+2- Copyright year changed to 2020.
+3- added authors in comoser.jason.
+4- InstallationGuide.df added.
+
+-----------------------------------------------------------
+
+What's new in version 2.3.5 and Commit 19? Updated on 02.09.2020
+
+1- Build 2.3.5 updated.
+2- Enable/Disable checks added in upload functions.
+3- Enable/Disable checks added in download functions.
+
+-----------------------------------------------------------
+
+Whats new in version 2.3.5 and Commit 18? Updated on 22.07.2020
+
+1- Build 2.3.5 updated and refactored.
+2- download items functionality added.
+3- download orders functionality added.
+4- download invoices functionality added.
+5- add application transaction functionality added.
+6- add invoice payments functionality added.
+7- customer auto sync functionality added.
+
+-----------------------------------------------------------
+
+Whats new in version 2.3.3 and Commit 17? Updated on 15.10.2019
+
+1- Build 2.3.3 updated.
+2. New Order and Invoice Item parameters added.
+
+-----------------------------------------------------------
+
+Whats new in version 2.3.2 and Commit 16? Updated on 19.07.2019
+
+1- Build 2.3.2 updated.
+2. Sandbox removed from admin settings.
+
+------------------------------------------------------------
+Whats new in version 2.3.1 and Commit 15? Updated on 10.07.19
+
+1- Build 2.3.1 updated.
+2. Error during add order is resolved due to Stock qty null for virtual products.
+
+------------------------------------------------------------
+
+Whats new in version 2.3.0 and Commit 14? Updated on 23.4.19
+
+1- Added Sync orders functionality on checkout page.
+
+------------------------------------------------------------
+
+Whats new in version 2.3.0 and Commit 13? Updated on 15.4.19
+
+1- Admin show/hide payment methods pay later form fixed.
+
+------------------------------------------------------------
+
+Whats new in version 2.3.0 and Commit 12? Updated on 12.4.19
+
+1- Added Sync orders functionality in admin EBizCharge options.
+2- Added PayLater method for invoices to be paid later on gateway.
+
+------------------------------------------------------------
+
+Whats new in version 2.3.0 and Commit 11? Updated on 05.03.19
+
+1- Added Sync orders functionality.
+
+------------------------------------------------------------
+
+Whats new in version 2.3.0 and Commit 10? Updated on 13.02.19
+
+1- Tested compatibility and test cases with Magento 2.3.0.
+2- Build 2.3.0 updated.
+
+------------------------------------------------------------
+
+Whats new in version 2.2.7 and Commit 9? Updated on 01.02.19
+
+1- Tested compatibility and test cases with Magento 2.2.7.
+2- Single Amex saved card validation added.
+3- Existing customer checks added.
+4- Build 2.2.7 updated.
+
+------------------------------------------------------------
+
+Whats new in version 2.2.6 and Commit 8? Updated on 21.12.18
+
+EConnect Functionality is added in EBizCharge.
+
+1- EConnect sync options enable/disable functionality added.
+2- Build 2.2.6 updated.
+
+------------------------------------------------------------
+
+Whats new in version 2.2.6 and Commit 7? Updated on 12.12.18
+
+EConnect Functionality is added in EBizCharge.
+
+1- Added notification for existing customer.
+2- Added compatibility for Magento Version 2.2.6.
+3- Build 2.2.6 updated.
+------------------------------------------------------------
+
+Whats new in version 2.2.5 and Commit 6? Updated on 19.9.18
+
+EConnect Functionality is added in EBizCharge (Both Merged).
+
+1- Sync all Customers to EBizCharge Connect.
+2- Sync all Items to EBizCharge Connect.
+3- Sync all Invoices to EBizCharge Connect.
+4- Solved all URL blocking
+5- All URL's are dynamic
+
+-------------------------------------------------------------
+
+Whats new in version 2.2.2 and Commit 5? Updated on 22.7.18
+
+EConnect Functionality is developed seperately.
+
+1- Sync all customers to EBizCharge.
+2- Sync all items to EBizCharge.
+3- Sync all invoices to EBizCharge.
+
+---------------------------------------
+
+Whats new in Version 2.2.1 Commit 4? Updated on 6.7.18
+
+1- AddInvoices after successful order
+2- AddItems in invoice after successful order
+3- UpdateItems if already exists
+
+-------------------------------
+
+Whats new in Version 1.0.0 Commit 3? Updated on 22.6.18
+
+1- Make it compatible with IE
+2- Made Customer scenarios If S-key is changes
+3- Compatibility with Magento 2.2.6 is tested
+4- Added American Express card CVV validation in saved and update methods
+
+-------------------------------
+
+Whats new in Version 1.0.0 Commit 2? Updated on 5.6.18
+
+1- Enable/disable CVV
+2- address line 2 error is resolved
+3- CC auto selected added
+4- name is changed to EBizCharge
+5- Code is cleaned
+
+-------------------------------
+
+Whats new in Version 1.0.0 Commit 1? Updated on 5.6.18
+
+not have card auto selected etc issues in progress
+
+
+
+

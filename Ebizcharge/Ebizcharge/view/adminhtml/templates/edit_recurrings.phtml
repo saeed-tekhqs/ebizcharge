@@ -1,0 +1,1519 @@
+<style type="text/css">
+    .new-cancel-btn {
+        color: #fff;
+        background: #514943;
+    }
+    .containerAddresss {
+        width: 100%;
+    }
+
+    .column {
+        float: left;
+        width: 50%;
+    }
+
+    .containerAddresss input {
+        width: 90%;
+    }
+
+    .containerAddresss select {
+        width: 90%;
+    }
+
+    /* Clear floats after the columns */
+    .rowAddress:after {
+        content: "";
+        display: table;
+        clear: both;
+        margin-bottom: 10px;
+
+    }
+
+    .errormsgs {
+        color: red;
+        display: none;
+        width: 100%;
+    }
+
+    .tdfreq {
+        vertical-align: inherit;
+        padding: 0px;
+        margin: 0px;
+        width: 45px;
+    }
+
+    .dateclass {
+        height: 30px;
+        border: #cccccc solid 1px;
+        padding: 2px 5px;
+    }
+
+    .zero {
+        margin: 0px;
+        padding: 0px;
+    }
+
+    .left {
+        float: left;
+    }
+
+    .selectdiv {
+        margin-left: 0px;
+        margin-top: 0px;
+    }
+
+    .leftdiv {
+        float: left;
+        width: 50%;
+        padding: 10px;
+    }
+
+    .rightdiv {
+        float: left;
+        padding: 0px 10px;
+    }
+
+    .background {
+        background: #fff;
+    }
+
+    .left {
+        width: 40%;
+        float: left;
+    }
+
+    .indefinitely {
+        clear: both;
+    }
+
+    input.date-picker {
+        background: #ffffff url('../images/select-bg.svg') no-repeat 100% 45%;
+        background-size: auto;
+        background-clip: border-box;
+        background-clip: padding-box;
+        border: 1px solid #cccccc;
+        border-radius: 1px;
+        font-family: 'Open Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+        font-size: 14px;
+        height: 32px;
+        line-height: 1.42857143;
+        padding: 4px 25px 5px 10px;
+        vertical-align: baseline;
+        width: 100%;
+        box-sizing: border-box;
+    }
+
+    .new-payment {
+        float: left;
+    }
+
+    .new-payment-left {
+        margin: 7px 20px;
+        float: left;
+    }
+
+    .new-payment-right {
+        margin: 7px;
+        float: right;
+    }
+
+    .add-new {
+        width: 100%;
+        float: left;
+    }
+
+    .admin__fieldset {
+        width: 60%;
+        float: left;
+        margin: 0 0 0 5%;
+    }
+
+    .admin__field-option._required {
+        margin: 5px 0;
+    }
+
+    .label.admin__field-label {
+        width: 30%;
+        float: left;
+        padding: 5px 0;
+    }
+
+    .add-new input {
+        padding: 5px;
+        width: 205px;
+    }
+
+    .add-new select {
+        padding: 5px;
+        width: auto;
+    }
+
+    .actions-toolbar {
+        float: left;
+        margin: 10px 0;
+        width: 100%;
+    }
+
+    #payment_msg {
+        color: red;
+        margin: 0 0 15px 0;
+        float: left;
+        width: 100%;
+    }
+
+    #payment_msgcNum {
+        color: red;
+        margin: 0 0 15px 0;
+        float: left;
+        width: 100%;
+    }
+
+    #payment_msgCvv {
+        color: red;
+        margin: 0 0 15px 0;
+        float: left;
+        width: 100%;
+    }
+
+    .modals-overlay {
+        z-index: 0 !important;
+    }
+</style>
+<style>
+    /*model with*/
+
+    .modal-popup .modal-inner-wrap {
+        width: 35%;
+    }
+
+    .dot_green {
+        height: 8px;
+        width: 8px;
+        background-color: #089D2C;
+        border-radius: 50%;
+        display: inline-block;
+        margin: 0px 5px;
+    }
+
+    .mainContainer {
+        width: 80%;
+        margin: 0 auto;
+    }
+
+    .title {
+        padding-top: 10px;
+    }
+
+    .col100 {
+        width: 100%;
+    }
+
+    .border {
+        border: 1px solid #cccccc;
+        border-width: 1px 0px 0px 0px;
+    }
+
+    .itemTr {
+        border: 1px solid #cccccc;
+        border-width: 1px 0px 1px 0;
+        height: 50px;
+    }
+
+    .marginZero {
+        margin: 0;
+    }
+
+    .PaddingZero {
+        margin: 0;
+    }
+
+    .leftOnly {
+        float: left;
+    }
+
+    .qtyWidth {
+        width: 50px;
+    }
+
+    .recUpdate {
+        width: 60%;
+        bckground: #F8070B;
+        margin: 0px;
+        padding: 0px;
+    }
+
+    .fr-main {
+        margin: 20px 0;
+    }
+
+    .fr-left {
+        width: 305;
+        float: left;
+        margin: 7px 20px;
+    }
+
+    #dates {
+        width: 100%;
+        border: 0;
+    }
+
+    #indefinately {
+        width: 100%;
+        border: 0;
+    }
+
+    .start {
+        width: 50%;
+        float: left;
+    }
+
+    .start span {
+        padding: 5px 10px 5px 10px;
+        float: left;
+    }
+
+    .end {
+        width: 50%;
+        float: left;
+    }
+
+    .end span {
+        margin: 0 0 0 8px;
+        padding: 5px 10px;
+    }
+
+    .field.required.indefinately {
+        margin: 10px;
+    }
+
+    .msgUnsub {
+        width: 100%;
+        color: red;
+        font-style: italic;
+        text-align: center;
+    }
+</style>
+<?php
+/**
+ * Displays a form to edit the credit card information
+ * for the selected saved payment method.
+ *
+ * @author      Century Business Solutions <support@centurybizsolutions.com>
+ * @copyright   Copyright (c) 2020 Century Business Solutions  (www.centurybizsolutions.com)
+ */
+$_code = 'payment';
+$requestCC = $block->getRequestCardCodeAdmin();
+
+$payment = $block->getSearchScheduledRecurringPayments();
+$profiles = $block->getPaymentMethods();
+$recurring = $block->getRecurring();
+
+$item = "";
+$recurringId = "";
+$recindefinitely = "";
+if (!empty($recurring)) {
+    $recindefinitely = $recurring['rec_indefinitely'];
+    $qty = $recurring['qty_ordered'];
+
+    $item = $recurring['mage_item_name'];
+    $recurringId = $recurring['rec_id'];
+    $itemId = $recurring['mage_item_id'];
+    $recurringPaymentMethodId = $recurring['eb_rec_method_id'];
+
+    $startRaw = $recurring['eb_rec_start_date'];
+    $expireRaw = $recurring['eb_rec_end_date'];
+    $start = date("Y-m-d", strtotime($startRaw));
+    $expire = date("Y-m-d", strtotime($expireRaw));
+    // for subscription shipping address
+    $orderId = $recurring['mage_order_id'];
+    $shippingAddressId = $recurring['shipping_address_id'];
+
+} else {
+    $itemId = 0;
+    $recurringPaymentMethodId = 0;
+    $item = "";
+    $qty = 0;
+    $start = "";
+    $expire = "";
+    // for subscription shipping address
+    $orderId = 0;
+    $shippingAddressId = '';
+}
+
+$product = $block->getProduct((int)$itemId);
+$name = $product->getName(); //Get Product Name
+
+$productPriceById = (!empty($product->getSpecialPrice())) ? $product->getSpecialPrice() : $product->getPrice();
+$productImages = $product->getMediaGalleryImages();
+
+if (!empty($productImages)) {
+    foreach ($productImages as $productImage) {
+        $img = "<img src = " . $productImage['url'] . " height=100 width=100 />";
+        break;
+    }
+
+} else {
+    $img = "<img src = 'image.png' height=100 width=100 />";
+}
+
+$shippingAddress = $block->getCustomerShippingAddress($orderId, $shippingAddressId);
+$customerData = $block->getCustomerDetail($recurring['mage_cust_id']);
+
+$billingAddressOptions = $block->getCustomerAddressList($recurring['billing_address_id']);
+$shippingAddressOptions = $billingAddressOptions;
+if($recurring['billing_address_id'] != $shippingAddressId) {
+    $shippingAddressOptions = $block->getCustomerAddressList($shippingAddressId);
+}
+
+?>
+<div id="container" class="main-col">
+    <form class=""
+          action="<?php echo $block->getUrl('ebizcharge_ebizcharge/recurrings/updateaction', ['_secure' => true]); ?>"
+          method="post" id="form-validate" enctype="multipart/form-data"
+          data-hasrequired="<?php echo __('* Required Fields'); ?>">
+        <input type="hidden" name="requestCC" id="requestCC" value="<?php echo $requestCC; ?>">
+        <input type="hidden" name="addressActionUrl" id="addressActionUrl" value="<?php echo $block->getUrl('ebizcharge_ebizcharge/recurrings/addressaction'); ?>">
+        <input type="hidden" name="loadCustomerAddressUrl" id="loadCustomerAddressUrl" value="<?php echo $block->getUrl('ebizcharge_ebizcharge/recurrings/loadcustomeraddressaction'); ?>">
+
+        <div class="mainContainer">
+            <?php if ($payment && $payment->ScheduleStatus == 1) { ?>
+                <div class="msgUnsub">
+                    <p>(This subscription has been unsubscribed.)</p>
+                </div>
+            <?php } else if ($payment && $payment->ScheduleStatus == 3) { ?>
+                <div class="msgUnsub">
+                    <p>(This subscription has been suspended.)</p>
+                </div>
+            <?php } ?>
+
+            <table class="col100">
+                <tr class="itemTr">
+                    <td><strong>Item Information</strong></td>
+                    <td><strong>Price</strong></td>
+                    <td><strong>Qty</strong></td>
+                    <td><strong>Subtotal</strong></td>
+                </tr>
+                <tr>
+                    <td>
+                        <p class="left"><?php echo !empty($img) ? $img : '';?></p>
+                        <p class="left title"><?php echo $item; ?></p>
+                    </td>
+                    <td><?php echo number_format($productPriceById, 2); ?></td>
+                    <td><input type="text" class="qtyWidth" name="qty" value="<?php echo $qty; ?>" maxlength="3"></td>
+                    <td><?php echo number_format($productPriceById * $qty, 2); ?></td>
+                </tr>
+            </table>
+            <?php //} ?>
+            <p class="border"></p>
+
+            <div class="recUpdate">
+                <div id="Frecheck" style="color: red;"></div>
+                <?php echo $block->getBlockHtml('formkey'); ?>
+                <input type="hidden" name="eb_rec_method_id" value="<?php echo $recurringPaymentMethodId ?>"/>
+                <input type="hidden" name="mid" value="<?php echo $block->getEbzcMethodId(); ?>"/>
+                <input type="hidden" name="mageCustId" value="<?php echo $block->getMageCustId(); ?>"/>
+                <input type="hidden" name="custIntId" value="<?php echo $block->getEbzcCustInternalId(); ?>"/>
+                <input type="hidden" name="amount" value="<?php echo $productPriceById; ?>"/>
+                <input type="hidden" name="schedulename" value="<?php echo $payment->ScheduleName ?? ''; ?>"/>
+                <input type="hidden" name="receiptnote" value="<?php echo $payment->ReceiptNote ?? ''; ?>"/>
+                <input type="hidden" name="payment_method_name" id="payment_method_name"/>
+
+                <div class="fr-main">
+                    <div class="fr-left">Frequency</div>
+                    <div class="fr-right">
+                        <select name="schedule" id="freqId" class="admin__control-select" style="width: 220px;"
+                                data-validate="{required:true}">
+                            <option disabled>Please select frequency</option>
+                            <?php
+                            $block->getConfiguredFrequencies($payment->Schedule ?? '');
+                            ?>
+                        </select>
+                    </div>
+                </div>
+
+                <fieldset id="dates">
+                    <div class="start">
+                        <label class="label" for="start_date">
+                            <span><?php echo __('Start Date'); ?></span>
+                        </label>&nbsp;&nbsp;
+                        <input type="text" class="dateclass" class="input-text required-entry hasDatepicker"
+                               title="<?php echo __('Start Date'); ?>" name="start_date" id="start_date"
+                               value="<?php if (isset($start)) {
+                                   echo $start;
+                               } ?>" data-input="start_date" autocomplete="off" data-validate="{required:true}"
+                               placeholder="YYYY-MM-DD"/>
+                    </div>
+
+                    <div class="end">
+                        <label class="label" for="expire_date">
+                            <span><?php echo __('End Date'); ?></span>
+                        </label>
+                        <input type="text" class="dateclass" class="input-text required-entry"
+                               title="<?php /* @escapeNotVerified */
+                               echo __('End Date'); ?>" name="expire_date" id="expire_date"
+                               value="<?php if (isset($expire)) {
+                                   echo $expire;
+                               } ?>" data-input="expire_date" autocomplete="off" data-validate="{required:true}"
+                               placeholder="YYYY-MM-DD"/>
+                    </div>
+                </fieldset>
+
+                <fieldset id="indefinately">
+                    <div class="field required indefinately">
+                        <label class="label" for="indefinately">
+                            <?php /* @escapeNotVerified */
+                            echo __('Recur Indefinitely'); ?>
+                        </label>
+                        <input type="hidden" name="table_rec_id" value="<?php echo $recurringId ?>">
+                        <input type="checkbox" id="rec_indefinitely" name="rec_indefinitely"
+                               value="1" <?php if ($recindefinitely == 1) echo "checked"; ?>>
+                    </div>
+                </fieldset>
+            </div>
+            <p class="border"></p>
+
+            <div class="fr-main">
+                <button type="button" class="action" id="address_btn" data-trigger="trigger">
+                    <span data-bind="i18n: 'Add Address'"></span>
+                </button>
+            </div>
+
+            <div class="fr-main">
+                <div class="fr-left">Billing Address</div>
+                <div class="fr-right">
+                    <select name="addressBill" class="admin__control-select" id="addressBill"
+                            style="width: 50%" data-validate="{required:true}">
+                        <option value="">Please Select Billing Address</option>
+                        <?php echo $billingAddressOptions; ?>
+                    </select>
+                </div>
+            </div>
+            <div class="fr-main">
+                <div class="fr-left">Shipping Address</div>
+                <div class="fr-right">
+                    <select name="addressShip" class="admin__control-select" id="addressShip"
+                            style="width: 50%" data-validate="{required:true}">
+                        <option value="">Please Select Shipping Address</option>
+                        <?php echo $shippingAddressOptions; ?>
+                    </select>
+                </div>
+            </div>
+
+            <!--for subscription shipping address-->
+            <?php if (!empty($shippingAddress)) { ?>
+                <div class="admin__page-section-item order-shipping-address" style="width: 25%;">
+                    <div class="admin__page-section-item-title">
+                        <br>
+                        <span class="title">Shipping Address</span>
+                    </div>
+                    <div class="box-content">
+                        <p>
+                            <address>
+                                <?php echo $shippingAddress; ?>
+                            </address>
+                        </p>
+                    </div>
+                </div>
+            <?php } ?>
+            <?php if (!empty($customerData)) { ?>
+                <div class="admin__page-section-item order-shipping-address" style="width: 25%;">
+                    <div class="admin__page-section-item-title">
+                        <br>
+                        <span class="title">Customer Info</span>
+                        <div class="actions"></div>
+                    </div>
+                    <address class="admin__page-section-item-content">
+                        <?php echo $customerData->getId(); ?>
+                        <br>
+                        <?php echo $customerData->getName(); ?>
+                        <br>
+                        <?php echo $customerData->getEmail(); ?>
+                    </address>
+                </div>
+            <?php } ?>
+
+            <p class="border"></p>
+
+            <span class="errormsgs" id="shipping_empty">Please select shipping method.</span>
+
+            <div class="fr-main">
+                <div class="fr-left">Shipping Method</div>
+                <div class="fr-right">
+                    <select name="shipping_method" class="admin__control-select" id="shippingMethod"
+                            style="width: 255px" data-validate="{required:true}">
+                        <option value="">Please Select Shipping Method</option>
+                        <?php echo $block->getShippingMethods($recurring['shipping_method']); ?>
+                    </select>
+                </div>
+            </div>
+
+            <div class="fr-main">
+                <div class="fr-left">Payment Method</div>
+                <div class="fr-right">
+                    <select name="method_id" class="admin__control-select" id="selectdivPayment" style="width: 255px;"
+                            data-validate="{required:true}">
+                        <option disabled>Please select payment method</option>
+                        <?php if (!empty($profiles)) {
+                            foreach ($profiles as $profile) { ?>
+                                <option value="<?php echo $profile->MethodID; ?>"
+                                    <?php if ($profile->MethodID == $recurringPaymentMethodId) {
+                                        echo 'selected';
+                                    } ?>>
+                                    <?php echo $profile->MethodName; ?>
+                                </option>
+                                <?php
+                            }
+                        }
+                        ?>
+                    </select>
+                </div>
+            </div>
+
+            <div class="new-payment">
+                <div class="new-payment-left">Add New Payment Method</div>
+                <div class="new-payment-right">
+                    <input type="checkbox" class="checkbox control-checkbox
+                        " name="payment[add_new]" id="options_add_new" value="1" data-selector="payment[add_new]">
+                </div>
+            </div>
+            <div class="new-payment" id="payop" style="margin-top: 7px; margin-left: 10px">
+                <input type="hidden" name="ebiz_option" id="ebiz_option" value="credit_card"/>
+                <div class="row" id="my-select-content" style="padding-bottom: 10px; border-bottom: 1px solid silver">
+                    <input type="radio" name="payment[ebzc_option_type]" id="ebizs_option" value="credit_card"
+                           class="validate-one-required-by-name ebizs_option" checked/>
+                    <label for="ebizs_option" class="label">
+                        <span>Pay by Card</span>
+                    </label>
+
+                    <input style="margin-left: 15px" type="radio" name="payment[ebzc_option_type]" id="ebizs_option_ach"
+                           value="ACH" class="validate-one-required-by-name ebizs_option"/>
+                    <label for="ebizs_option_ach" class="label">
+                        <span>Pay by Bank </span>
+                    </label>
+                </div>
+            </div>
+            <div class="add-new" id="add-new">
+                <fieldset class="admin__fieldset">
+                    <span style="color: red; display: none;" id="payment_msg">All fields are required.</span>
+                    <span style="color: red; display: none;" id="payment_msgcNum">Please enter valid card number.</span>
+                    <span style="color: red; display: none;" id="payment_msgCvv">Please enter CVV between 3 and 4 digits.</span>
+                    <div class="admin__field-option _required">
+                        <label class="label admin__field-label" for="<?php echo $_code; ?>_cc_owner_new">
+                            <span class="required"><?php echo __('Name on Card'); ?></span>
+                        </label>
+                        <div class="admin__field-control control">
+                            <input type="text" id="<?php echo $_code; ?>_cc_owner_new"
+                                   name="<?php echo $_code; ?>[cc_owner]" title="<?php echo __('Name on Card'); ?>"
+                                   class="input-text required" value=""/>
+                        </div>
+                    </div>
+
+                    <div class="admin__field-option _required">
+                        <label class="label admin__field-label" for="<?php echo $_code; ?>_cc_number_new">
+                            <span class="required"><?php echo __('Credit Card Number'); ?></span>
+                        </label>
+                        <div class="admin__field-control control">
+                            <input type="text" id="<?php echo $_code; ?>_cc_number_new"
+                                   name="<?php echo $_code; ?>[cc_number]"
+                                   title="<?php echo __('Credit Card Number'); ?>"
+                                   class="input-text control-text required-entry" value="" pattern="\d*"
+                                   minlength="15" maxlength="20"/>
+                        </div>
+                    </div>
+
+                    <div class="admin__field-option _required">
+                        <label class="label admin__field-label" for="<?php echo $_code; ?>_cc_type_new">
+                            <span class="required"><?php echo __('Credit Card Type'); ?></span>
+                        </label>
+                        <div class="admin__field-control control">
+                            <select id="<?php echo $_code; ?>_cc_type_new" name="<?php echo $_code; ?>[cc_type]"
+                                    class="required-entry select control-select">
+
+                                <option value=""><?php echo __('Please Select Card Type'); ?></option>
+                                <?php $_ccType = $block->getInfoData('cc_type'); ?>
+                                <?php foreach ($block->getCcAvailableTypes() as $_typeCode => $_typeName): ?>
+
+                                    <option value="<?php echo $_typeCode; ?>"<?php if ($_typeCode == $_ccType): ?> selected="selected"<?php endif; ?>><?php echo $_typeName; ?></option>
+
+                                <?php endforeach ?>
+
+                            </select>
+
+                        </div>
+                    </div>
+
+                    <div class="admin__field-option _required" id="<?php echo $_code; ?>_cc_exp_new">
+                        <label class="label admin__field-label" for="<?php echo $_code; ?>_exp_new">
+                            <span class="required"><?php echo __('Expiration Date'); ?></span>
+                        </label>
+                        <div class="admin__field-control control">
+                            <select id="<?php echo $_code; ?>_exp_new" name="<?php echo $_code; ?>[cc_exp_month]"
+                                    class="month required-entry select control-select">
+                                <?php $_ccExpMonth = $block->getInfoData('cc_exp_month'); ?>
+                                <?php foreach ($block->getCcMonths() as $k => $v) { ?>
+
+                                    <option value="<?php echo $k ? $k : ''; ?>"<?php if ($k == $_ccExpMonth): ?> selected="selected"<?php endif; ?>><?php echo $v; ?></option>
+
+                                <?php } ?>
+                            </select>
+
+                            <?php $_ccExpYear = $block->getInfoData('cc_exp_year'); ?>
+
+                            <select id="<?php echo $_code; ?>_exp_yr_new" name="<?php echo $_code; ?>[cc_exp_year]"
+                                    class="year required-entry select control-select">
+
+                                <?php foreach ($block->getCcYears() as $k => $v) { ?>
+
+                                    <option value="<?php echo $k ? $k : ''; ?>"<?php if ($k == $_ccExpYear): ?> selected="selected"<?php endif; ?>><?php echo $v; ?></option>
+
+                                <?php } ?>
+                            </select>
+
+                        </div>
+                    </div>
+
+                    <?php if ($requestCC) { ?>
+                        <div class="admin__field-option _required">
+                            <label class="label admin__field-label" for="<?php echo $_code; ?>_cc_cid_new">
+                                <span class="required"><?php echo __('CVV'); ?></span>
+                            </label>
+                            <div class="admin__field-control control">
+                                <input type="text" id="<?php echo $_code; ?>_cc_cid_new"
+                                       name="<?php echo $_code; ?>[cc_cid]"
+                                       title="<?php echo __('Card Verification Number'); ?>" style="width: 50px;"
+                                       pattern="\d*" minlength="3" maxlength="4"/>
+                            </div>
+                        </div>
+                    <?php } ?>
+
+                    <div class="admin__field-option _required">
+                        <label class="label admin__field-label" for="<?php echo $_code; ?>_avs_street_new">
+                            <span class="required"><?php echo __('Avs Street'); ?></span>
+                        </label>
+                        <div class="admin__field-control control">
+                            <input type="text" id="<?php echo $_code; ?>_avs_street_new"
+                                   name="<?php echo $_code; ?>[avs_street]" title="<?php echo __('Avs Street'); ?>"
+                                   class="input-text required" value=""/>
+                        </div>
+                    </div>
+
+                    <div class="admin__field-option _required">
+                        <label class="label admin__field-label" for="<?php echo $_code; ?>_avs_zip_new">
+                            <span class="required"><?php echo __('Avs Zip'); ?></span>
+                        </label>
+                        <div class="admin__field-control control">
+                            <input type="text" id="<?php echo $_code; ?>_avs_zip_new"
+                                   name="<?php echo $_code; ?>[avs_zip]" title="<?php echo __('Avs Zip'); ?>"
+                                   class="input-text required" value=""/>
+                        </div>
+                    </div>
+
+                </fieldset>
+            </div>
+
+            <div class="add-new" id="add-new-ach" style="display: none;">
+                <fieldset class="admin__fieldset">
+                    <span style="color: red; display: none;" id="payment_msg_ach">All fields are required.</span>
+                    <span style="color: red; display: none;" id="payment_msgcNumAch">The account number should be between 9 and 14 digits.</span>
+                    <span style="color: red; display: none;" id="payment_msgcNumRoutAch">Please enter valid 9 digit routing number.</span>
+
+                    <div class="admin__field-option _required">
+                        <label class="label admin__field-label" for="<?php echo $_code; ?>_cc_owner_new_ach">
+                            <span class="required"><?php echo __('Account Holder'); ?></span>
+                        </label>
+                        <div class="admin__field-control control">
+                            <input type="text" id="<?php echo $_code; ?>_cc_owner_new_ach"
+                                   name="<?php echo $_code; ?>[cc_owner_ach]"
+                                   title="<?php echo __('Account Holder'); ?>"
+                                   class="input-text required" value=""/>
+                        </div>
+                    </div>
+
+                    <div class="admin__field-option _required">
+                        <label class="label admin__field-label" for="<?php echo $_code; ?>_cc_type_new_ach">
+                            <span class="required"><?php echo __('Account Type'); ?></span>
+                        </label>
+                        <div class="admin__field-control control">
+                            <select id="<?php echo $_code; ?>_cc_type_new_ach" name="<?php echo $_code; ?>[cc_type_ach]"
+                                    class="required-entry select control-select">
+                                <option value="checking">Checking</option>
+                                <option value="savings">Savings</option>
+                            </select>
+
+                        </div>
+                    </div>
+
+                    <div class="admin__field-option _required">
+                        <label class="label admin__field-label" for="<?php echo $_code; ?>_cc_number_new_ach">
+                            <span class="required"><?php echo __('Account Number'); ?></span>
+                        </label>
+                        <div class="admin__field-control control">
+                            <input type="text" id="<?php echo $_code; ?>_cc_number_new_ach" minlength="9" maxlength="14"
+                                   name="<?php echo $_code; ?>[cc_number_ach]"
+                                   title="<?php echo __('Account Number'); ?>"
+                                   class="input-text required" value=""/>
+                        </div>
+                    </div>
+
+                    <div class="admin__field-option _required">
+                        <label class="label admin__field-label" for="<?php echo $_code; ?>_cc_cid_new_ach">
+                            <span class="required"><?php echo __('Routing Number'); ?></span>
+                        </label>
+                        <div class="admin__field-control control">
+                            <input type="text" id="<?php echo $_code; ?>_cc_cid_new_ach"
+                                   name="<?php echo $_code; ?>[cc_routing_ach]"
+                                   title="<?php echo __('Routing Number'); ?>"/>
+                        </div>
+                    </div>
+                </fieldset>
+            </div>
+
+            <?php
+            if ($payment && $payment->ScheduleStatus == 1) {
+                $statusTtile = 'Resubscribe';
+            } else {
+                $statusTtile = 'Unsubscribe';
+            }
+            ?>
+            <div class="actions-toolbar">
+
+                <div class="primary">
+                    <button type="button" id="" class="action primary save_btn" title="<?php /* @escapeNotVerified */
+                    echo __('Update Payment Method'); ?>">
+                        <span><?php /* @escapeNotVerified */
+                            echo __('Save Changes'); ?></span>
+                    </button>
+                    <button type="button" id="sub_btn" class="action primary sub_btn"
+                            title="<?php /* @escapeNotVerified */
+                            echo __($statusTtile); ?>">
+                        <span><?php /* @escapeNotVerified */
+                            echo __($statusTtile); ?></span>
+                    </button>
+                    <?php if($payment && $payment->ScheduleStatus != 3) { ?>
+                    <button type="button" id="del_btn" class="action primary del_btn"
+                            title="<?php /* @escapeNotVerified */
+                            echo __('Suspend'); ?>">
+                        <span><?php /* @escapeNotVerified */
+                            echo __('Suspend'); ?></span>
+                    </button>
+                    <?php } ?>
+					<button type="button" class="new-cancel-btn" id="new-cancel-btn" onclick="goBack()">
+                        <span>Cancel</span>
+                    </button>
+                </div>
+            </div>
+    </form>
+</div>
+
+<form class="" id="unsub" action="<?php /* @escapeNotVerified */
+echo $block->getUrl('ebizcharge_ebizcharge/recurrings/updatesubscriptionstatus', ['_secure' => true]); ?>" method="post">
+
+    <?php
+    echo $block->getBlockHtml('formkey');
+    if ($payment && $payment->ScheduleStatus == 1) {
+        $statusValue = 0;
+    } else {
+        $statusValue = 1;
+    }
+    ?>
+    <input type="hidden" name="sid" value="<?php echo $statusValue; ?>"/>
+    <input type="hidden" name="mid" value="<?php echo $block->getEbzcMethodId(); ?>"/>
+</form>
+
+<form class="" id="delsub" action="<?php /* @escapeNotVerified */
+echo $block->getUrl('ebizcharge_ebizcharge/recurrings/updatesubscriptionstatus', ['_secure' => true]); ?>" method="post">
+    <?php echo $block->getBlockHtml('formkey'); ?>
+    <input type="hidden" name="mid" value="<?php echo $block->getEbzcMethodId(); ?>"/>
+    <input type="hidden" name="actionName" value="suspend"/>
+</form>
+
+<div id="myModelConfirmDel"></div>
+<div id="myModel"></div>
+<div id="myModelConfirm"></div>
+
+<div id="optionsAddress" class="containerAddresss">
+    <form id="myForm" method="post">
+        <input type="hidden" name="customerIdAddress" value="<?php echo $recurring['mage_cust_id']; ?>" id="customerIdAddress"/>
+        <fieldset class="fieldset">
+            <legend class="legend"><span>Contact Information</span></legend>
+            <div class="rowAddress">
+                <div class="column">
+                    <span>First Name</span>
+                    <div class="control">
+                        <input type="text" id="firstname" name="ship_first_name" value="" title="First Name"
+                               class=" input-text admin__control-text" data-validate="{required:true}"
+                               aria-required="true">
+                    </div>
+                </div>
+                <div class="column">
+                    <span>Last Name</span>
+                    <div class="control">
+                        <input type="text" id="lastname" name="ship_last_name" value="" title="Last Name"
+                               class=" input-text admin__control-text" data-validate="{required:true}"
+                               aria-required="true">
+                    </div>
+                </div>
+            </div>
+
+            <div class="rowAddress">
+                <div class="column">
+                    <span>Company</span>
+                    <div class="control">
+                        <input type="text" name="ship_company" id="company" value="" title="Company"
+                               class=" input-text admin__control-text ">
+                    </div>
+                </div>
+                <div class="column">
+                    <span>Phone Number</span>
+                    <div class="control">
+                        <input type="text" name="ship_phone" id="telephone" value="" title="Phone Number"
+                               class=" input-text admin__control-text" aria-required="true">
+                    </div>
+                </div>
+            </div>
+
+        </fieldset>
+        <fieldset class="fieldset">
+            <legend class="legend"><span>Address Information</span></legend>
+            <div class="rowAddress">
+                <div class="column">
+                    <span>Street Address</span>
+                    <div class="control">
+                        <input type="text" name="ship_address1" title="Street Address" id="street_1"
+                               class=" input-text admin__control-text" aria-required="true">
+                    </div>
+                </div>
+                <div class="column">
+                    <span>Street Address 2</span>
+                    <div class="control">
+                        <input type="text" name="ship_address2" title="Street Address 2" id="street_2"
+                               class=" input-text admin__control-text" aria-required="true">
+                    </div>
+                </div>
+            </div>
+            <div class="rowAddress">
+                <div class="column">
+                    <span>City</span>
+                    <div class="control">
+                        <input type="text" name="ship_city" value="" title="City" class="input-text admin__control-text"
+                               id="city" aria-required="true">
+                    </div>
+                </div>
+                <div class="column">
+                    <span>State/Province</span>
+                    <div class="control">
+                        <select id="region_id" name="ship_region" title="State/Province"
+                                class="input-text admin__control-text admin__control-select" defaultvalue="0"
+                                aria-required="true">
+                            <option value="">Please select a region, state or province.</option>
+                            <option value="1">Alabama</option>
+                            <option value="2">Alaska</option>
+                            <option value="3">American Samoa</option>
+                            <option value="4">Arizona</option>
+                            <option value="5">Arkansas</option>
+                            <option value="6">Armed Forces Africa</option>
+                            <option value="7">Armed Forces Americas</option>
+                            <option value="8">Armed Forces Canada</option>
+                            <option value="9">Armed Forces Europe</option>
+                            <option value="10">Armed Forces Middle East</option>
+                            <option value="11">Armed Forces Pacific</option>
+                            <option value="12">California</option>
+                            <option value="13">Colorado</option>
+                            <option value="14">Connecticut</option>
+                            <option value="15">Delaware</option>
+                            <option value="16">District of Columbia</option>
+                            <option value="17">Federated States Of Micronesia</option>
+                            <option value="18">Florida</option>
+                            <option value="19">Georgia</option>
+                            <option value="20">Guam</option>
+                            <option value="21">Hawaii</option>
+                            <option value="22">Idaho</option>
+                            <option value="23">Illinois</option>
+                            <option value="24">Indiana</option>
+                            <option value="25">Iowa</option>
+                            <option value="26">Kansas</option>
+                            <option value="27">Kentucky</option>
+                            <option value="28">Louisiana</option>
+                            <option value="29">Maine</option>
+                            <option value="30">Marshall Islands</option>
+                            <option value="31">Maryland</option>
+                            <option value="32">Massachusetts</option>
+                            <option value="33">Michigan</option>
+                            <option value="34">Minnesota</option>
+                            <option value="35">Mississippi</option>
+                            <option value="36">Missouri</option>
+                            <option value="37">Montana</option>
+                            <option value="38">Nebraska</option>
+                            <option value="39">Nevada</option>
+                            <option value="40">New Hampshire</option>
+                            <option value="41">New Jersey</option>
+                            <option value="42">New Mexico</option>
+                            <option value="43">New York</option>
+                            <option value="44">North Carolina</option>
+                            <option value="45">North Dakota</option>
+                            <option value="46">Northern Mariana Islands</option>
+                            <option value="47">Ohio</option>
+                            <option value="48">Oklahoma</option>
+                            <option value="49">Oregon</option>
+                            <option value="50">Palau</option>
+                            <option value="51">Pennsylvania</option>
+                            <option value="52">Puerto Rico</option>
+                            <option value="53">Rhode Island</option>
+                            <option value="54">South Carolina</option>
+                            <option value="55">South Dakota</option>
+                            <option value="56">Tennessee</option>
+                            <option value="57">Texas</option>
+                            <option value="58">Utah</option>
+                            <option value="59">Vermont</option>
+                            <option value="60">Virgin Islands</option>
+                            <option value="61">Virginia</option>
+                            <option value="62">Washington</option>
+                            <option value="63">West Virginia</option>
+                            <option value="64">Wisconsin</option>
+                            <option value="65">Wyoming</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <div class="rowAddress">
+
+                <div class="column">
+                    <span>Zip/Postal Code</span>
+                    <div class="control">
+                        <input type="text" name="ship_zipcode" value="" title="Zip/Postal Code" id="zip"
+                               class="input-text admin__control-text" aria-required="true">
+                    </div>
+                </div>
+                <div class="column">
+                    <span>Country</span>
+                    <div class="control">
+                        <select name="ship_country" id="country"
+                                class="input-text admin__control-text admin__control-select" title="Country"
+                                data-validate="{'validate-select':true}" aria-required="true">
+                            <option value="US" selected="selected">United States</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+        </fieldset>
+    </form>
+</div>
+
+<script type="text/javascript">
+    require(['jquery'], function($) {
+
+        $(document).ready(function() {
+
+            jQuery('#payment_cc_number_new').change(function () {
+
+                let cc = jQuery(this).val();
+                cc = cc.replaceAll("\\D", "");
+                let pattern = new RegExp('[ ]+', 'g');
+                cc = cc.replace(pattern, '');
+                $(this).val(cc);
+
+                if(!cc || !cc.length) return undefined;
+                let ccType = '';
+                let firstNumber = cc.charAt(0);
+                if(firstNumber == '4') ccType = 'VI';
+                if(firstNumber == '5') ccType = 'MC';
+                if(firstNumber == '3') ccType = 'AE';
+                if(firstNumber == '6') ccType = 'DI';
+
+                jQuery('#payment_cc_type_new').val(ccType);
+                if(ccType != '') {
+                    jQuery('#payment_cc_type_new option:not(:selected)').prop('disabled', true);
+                }
+            });
+        });
+    });
+
+    require(
+        [
+            'jquery',
+            'Magento_Ui/js/modal/modal'
+        ],
+        function ($, modal) {
+
+            var str = $('#sub_btn').text();
+
+            var options = {
+                type: 'popup',
+                responsive: true,
+                innerScroll: true,
+                title: 'Confirm',
+                buttons: [{
+                    text: $.mage.__('Cancel'),
+                    class: 'btn-background-cancel',
+                    click: function () {
+                        this.closeModal();
+                    }
+                }, {
+                    text: $.mage.__('Yes, Update'),
+                    class: 'btn-background-del',
+                    click: function () {
+                        this.closeModal();
+                        $('body').trigger('processStart');
+                        $('#form-validate').submit();
+                    }
+                }]
+            };
+
+            var optionsConfirmDel = {
+                type: 'popup',
+                responsive: true,
+                innerScroll: true,
+                title: 'Suspend',
+                buttons: [{
+                    text: $.mage.__('Cancel'),
+                    class: 'btn-background-cancel',
+                    click: function () {
+                        this.closeModal();
+                    }
+                }, {
+                    text: $.mage.__('Yes, Suspend'),
+                    class: 'btn-background-del',
+                    click: function () {
+                        $('#delsub').submit();
+                    }
+                }]
+            };
+
+            var optionsConfirm = {
+                type: 'popup',
+                responsive: true,
+                innerScroll: true,
+                title: 'Subscription Action',
+                buttons: [{
+                    text: $.mage.__('Cancel'),
+                    class: 'btn-background-cancel',
+                    click: function () {
+                        this.closeModal();
+                    }
+                }, {
+                    text: $.mage.__('Yes, ' + str),
+                    class: 'btn-background-del',
+                    click: function () {
+                        $('#unsub').submit();
+                    }
+                }]
+            };
+            var optionsRecAlert = {
+                type: 'popup',
+                responsive: true,
+                innerScroll: true,
+                title: 'Action',
+                buttons: [{
+                    text: $.mage.__('Ok'),
+                    class: 'btn-background-cancel',
+                    click: function () {
+                        this.closeModal();
+                    }
+                }]
+            };
+            var optionsAddress = {
+                type: 'popup',
+                responsive: true,
+                innerScroll: true,
+                title: 'Customer Address',
+                buttons: [{
+                    text: $.mage.__('Cancel'),
+                    class: 'btn-background-cancel',
+                    click: function () {
+                        this.closeModal();
+                    }
+                }, {
+                    text: $.mage.__('Save Address'),
+                    class: 'btn-background-del',
+                    click: function () {
+
+                        if ($('#firstname').val() == '') {
+                            document.getElementById("firstname").style.borderColor = "red";
+                            return false;
+                        } else {
+                            document.getElementById("firstname").style.borderColor = "#adadad";
+                        }
+                        if ($('#lastname').val() == '') {
+                            document.getElementById("lastname").style.borderColor = "red";
+                            return false;
+                        } else {
+                            document.getElementById("lastname").style.borderColor = "#adadad";
+                        }
+                        if ($('#street_1').val() == '') {
+                            document.getElementById("street_1").style.borderColor = "red";
+                            return false;
+                        } else {
+                            document.getElementById("street_1").style.borderColor = "#adadad";
+                        }
+                        if ($('#city').val() == '') {
+                            document.getElementById("city").style.borderColor = "red";
+                            return false;
+                        } else {
+                            document.getElementById("city").style.borderColor = "#adadad";
+                        }
+                        if ($('#region_id').val() == '') {
+                            document.getElementById("region_id").style.borderColor = "red";
+                            return false;
+                        } else {
+                            document.getElementById("region_id").style.borderColor = "#adadad";
+                        }
+
+                        if ($('#zip').val() == '') {
+                            document.getElementById("zip").style.borderColor = "red";
+                            return false;
+                        } else {
+                            document.getElementById("zip").style.borderColor = "#adadad";
+                        }
+                        if ($('#telephone').val() == '') {
+                            document.getElementById("telephone").style.borderColor = "red";
+                            return false;
+                        } else {
+                            document.getElementById("telephone").style.borderColor = "#adadad";
+                        }
+
+                        var customerIdAddress = $('#customerIdAddress').val();
+
+                        $.ajax({
+                            type: "POST",
+                            url: "<?php echo $block->getUrl('ebizcharge_ebizcharge/recurrings/addressaction'); ?>",
+                            dataType: "html",
+                            data: $("#myForm").serialize(),//only input
+                            showLoader: true,
+                            success: function (response) {
+                                if (response == 1) {
+                                    $('.btn-background-cancel').click();
+                                    $.ajax({
+                                        type: "POST",
+                                        url: "<?php echo $block->getUrl('ebizcharge_ebizcharge/recurrings/loadcustomeraddressaction'); ?>",
+                                        dataType: "json",
+                                        data: {customer_id: customerIdAddress},//only input
+                                        showLoader: true,
+                                        success: function (data) {
+                                            $('#addressBill').empty();
+                                            $('#addressShip').empty();
+
+                                            if (data.html_data !== undefined && data.html_data) {
+                                                $('#addressBill').append(data.html_data);
+                                                $('#addressShip').append(data.html_data);
+
+                                            } else {
+                                                $('#addressBill').append('<option value="">No Address found</option>');
+                                                $('#addressShip').append('<option value="">No Address found</option>');
+                                            }
+                                        }
+                                    });
+                                }
+                            }
+                        });
+                    }
+                }]
+            };
+
+            require(['jquery'], function ($) {
+
+                $(".sub_btn").click(function () {
+                    var str = $('#sub_btn').text();
+
+                    str = str.toLowerCase().replace(/\b[a-z]/g, function (letter) {
+                        return letter.toLowerCase();
+                    });
+
+                    $('#myModelConfirm').html('<div>Are you sure you want to' + str + ' to this product?</div>');
+                    $('#myModelConfirm').modal('openModal');
+
+                });
+
+                $(".del_btn").click(function () {
+                    $('#myModelConfirmDel').html('<div>Are you sure you want to suspend this customer subscription?</div>');
+                    $('#myModelConfirmDel').modal('openModal');
+                });
+
+                $("#address_btn").click(function () {
+                    var customerId = $('#customerIdAddress').val();
+                    if (customerId != '') {
+                        $("#myForm").trigger("reset");
+                        $('#optionsAddress').modal('openModal');
+                    }
+                });
+            });
+
+            var popup = modal(options, $('#myModel'));
+            var popupConfirmDel = modal(optionsConfirmDel, $('#myModelConfirmDel'));
+            var popupConfirm = modal(optionsConfirm, $('#myModelConfirm'));
+            var popupAddress = modal(optionsAddress, $('#optionsAddress'));
+            var popupRecCheck = modal(optionsRecAlert, $('#myRecAlert'));
+        }
+    );
+
+    /* For new payment method */
+    require(['jquery', 'domReady!'], function ($) {
+        $('#add-new').hide();
+        $("#options_add_new").attr('checked', false);
+        //let ischeckBoxChecked = $('#options_rec_activate').is(":checked");
+
+        $('#options_add_new').click(function () {
+            if ($(this).prop("checked") == true) {
+                $('#add-new').show();
+                $('#selectdivPayment').prop("disabled", true);
+
+            } else if ($(this).prop("checked") == false) {
+                $('#add-new').hide();
+                $('#selectdivPayment').prop("disabled", false);
+            }
+        });
+        // set payment method name on ready
+        $('#payment_method_name').val($('#selectdivPayment option:selected').text());
+
+        $('#selectdivPayment').change(function () {
+            $('#payment_method_name').val($('#selectdivPayment option:selected').text());
+        });
+
+        $('#start_date').click(function () {
+            $("#start_date").attr("autocomplete", "off");
+        });
+
+        $('#expire_date').click(function () {
+            $("#expire_date").attr("autocomplete", "off");
+        });
+
+    });
+
+    require(['jquery'], function ($) {
+        $("#payment_cc_number_new").bind("keypress", function (e) {
+            var keyCode = e.which ? e.which : e.keyCode;
+
+            if (!(keyCode >= 48 && keyCode <= 57)) {
+                //event.preventDefault();
+                return false;
+            } else {
+                // nothing
+            }
+        });
+    });
+
+    require(['jquery'], function ($) {
+        $("#payment_cc_cid_new").bind("keypress", function (e) {
+            var keyCode = e.which ? e.which : e.keyCode
+
+            if (!(keyCode >= 48 && keyCode <= 57)) {
+                //event.preventDefault();
+                return false;
+            } else {
+                // nothing
+            }
+        });
+    });
+
+    function unsub() {
+        document.getElementById('unsub').submit();
+    }
+
+    require(['jquery'], function ($) {
+
+        if ($('#rec_indefinitely').prop("checked") == true) {
+            $('#expire_date').prop("disabled", true);
+        }
+
+        $('.save_btn').click(function (e) {
+            var days = 0;
+
+            if($('#shippingMethod').val() == '') {
+                $('#shipping_empty').show();
+                do_addcss.focus('shipping_empty');
+                return false;
+            } else {
+                $('#shipping_empty').hide();
+            }
+
+            if ($('#options_add_new').prop("checked") == true) {
+                if (
+                    ($("#payment_cc_owner_new").val() == '') ||
+                    ($("#payment_cc_type_new").val() == '') ||
+                    ($("#payment_cc_number_new").val() == '') ||
+                    ($("#payment_exp_new").val() == '') ||
+                    ($("#payment_exp_yr_new").val() == '')
+                    <?php if ($requestCC) { ?>
+                    || ($("#payment_cc_cid_new").val() == '')
+                    <?php } ?>
+                    || ($("#payment_avs_street_new").val() == '')
+                    || ($("#payment_avs_zip_new").val() == '')
+                ) {
+                    $('#payment_msg').show();
+                    return false;
+                } else {
+                    $('#payment_msg').hide();
+                }
+
+                // check for credit card number
+                var numLength = $("#payment_cc_number_new").val().length;
+
+                if (numLength < 15 || numLength > 16) {
+                    $('#payment_msgcNum').show();
+                    return false;
+                } else {
+                    $('#payment_msgcNum').hide();
+                }
+                // check for CVV
+                <?php if ($requestCC) { ?>
+                var cvvLength = $("#payment_cc_cid_new").val().length;
+
+                if (cvvLength < 3 || cvvLength > 4) {
+                    $('#payment_msgCvv').show();
+                    return false;
+                } else {
+                    $('#payment_msgCvv').hide();
+                }
+                <?php } ?>
+            }
+
+            if ($('#rec_indefinitely').prop("checked") == false) {
+                var frequency = $("#freqId").val();
+                var sdate = $("#start_date").val();
+                var edate = $("#expire_date").val();
+
+                switch (frequency) {
+                    case "daily":
+                        days = 1;
+                        break;
+                    case "weekly":
+                        days = 7;
+                        break;
+                    case "bi-weekly":
+                    case "bi-monthly":
+                        days = 14;
+                        break;
+                    case "four-week":
+                        days = 28;
+                        break;
+                    case "monthly":
+                        days = 30;
+                        break;
+                    case "two-month":
+                        days = 60;
+                        break;
+                    case "quarterly":
+                    case "three-month":
+                    case "90-days":
+                        days = 90;
+                        break;
+                    case "four-month":
+                        days = 120;
+                        break;
+                    case "five-month":
+                        days = 150;
+                        break;
+                    case "bi-annually":
+                    case "six-month":
+                    case "180-days":
+                        days = 180;
+                        break;
+                    case "annually":
+                        days = 365;
+                        break;
+                    default:
+                        days = 30;
+                }
+
+                var frequencyDays = days;
+                const startDate = sdate;
+                const endDate = edate;
+
+                const diffInMs = new Date(endDate) - new Date(startDate)
+                const diffInDays = diffInMs / (1000 * 60 * 60 * 24);
+
+                if (Math.round(diffInDays) < Math.round(frequencyDays)) {
+                    $('#Frecheck').html("<div>Please select valid dates for (" + frequency + ") frequency.</div>");
+                } else {
+                    $('#Frecheck').html("");
+                    var str = $('#sub_btn').text();
+                    checkRecDate();
+                }
+            } else {
+                $('#Frecheck').html("");
+                var str = $('#sub_btn').text();
+                checkRecDate();
+            }
+        });
+
+        function checkRecDate(){
+            var customer_id = $("#selectdivCustomer").val();
+            var product_id = $("#selectdivProduct").val();
+            var start_date = $("#start_date").val();
+            var rec_id = $("#rec_id").val();
+            var givenDate = start_date;
+            var currentDate = new Date();
+            givenDate = new Date(givenDate);
+
+            if(givenDate > currentDate ) {
+                $.ajax({
+                    method: "POST",
+                    url: '<?php echo $block->getUrl('ebizcharge_ebizcharge/recurrings/checkrecurringaction'); ?>',
+                    data: {customer_id: customer_id ,product_id: product_id,start_date: start_date,rec_id: rec_id},
+                    dataType: "json",
+                    showLoader: true,
+                    success: function (data) {
+                        if(data.status == 'P'){
+                            $('#myModel').html('<div>Do you want to update the changes you made to this subscription?</div>');
+                            $('#myModel').modal('openModal');
+                        } else {
+                            $('#myRecAlert').html("<div>"+data.message+"</div>");
+                            $('#myRecAlert').modal('openModal');
+                        }
+                    },
+                    complete: function () {},
+                    error: function (result) {}
+                });
+
+            } else{
+                $('#myModel').html('<div>Do you want to update the changes you made to this subscription?</div>');
+                $('#myModel').modal('openModal');
+            }
+        }
+    });
+
+    require([
+        'jquery',
+        'mage/mage',
+        'mage/calendar'
+    ], function ($) {
+        let minDate = new Date();
+        minDate.setDate(minDate.getDate() + 1);
+
+        $('#dates').dateRange({
+            buttonText: 'Select Date',
+            dateFormat: 'Y-mm-dd',
+            minDate: minDate,
+            from: {
+                id: 'start_date'
+            },
+            to: {
+                id: 'expire_date'
+            }
+        });
+        $('#rec_indefinitely').click(function () {
+            if ($(this).prop("checked") == true) {
+                $('#expire_date').prop("disabled", true);
+            } else if ($(this).prop("checked") == false) {
+                $('#expire_date').prop("disabled", false);
+            }
+        });
+
+    });
+
+    function goBack() {
+        window.history.back();
+    }
+
+</script>
+
+
+<script type="text/x-magento-init">
+    {
+        "*": {
+            "Ebizcharge_Ebizcharge/js/susbscriptionUpdate" : {}
+        }
+    }
+</script>
+
+

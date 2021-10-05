@@ -1,0 +1,29 @@
+<config>
+  <group id="ebiz_recurring_order">
+    <schedule_generate_every>1440</schedule_generate_every>
+    <schedule_ahead_for>5040</schedule_ahead_for>
+    <schedule_lifetime>120</schedule_lifetime>
+    <history_cleanup_every>5040</history_cleanup_every>
+    <history_success_lifetime>5040</history_success_lifetime>
+    <history_failure_lifetime>5040</history_failure_lifetime>
+    <use_separate_process>1</use_separate_process>
+  </group>
+  <group id="ebiz_check_item_stock">
+    <schedule_generate_every>50</schedule_generate_every>
+    <schedule_ahead_for>5</schedule_ahead_for>
+    <schedule_lifetime>60</schedule_lifetime>
+    <history_cleanup_every>120</history_cleanup_every>
+    <history_success_lifetime>130</history_success_lifetime>
+    <history_failure_lifetime>140</history_failure_lifetime>
+    <use_separate_process>1</use_separate_process>
+  </group>
+  <!--<group id="ebiz_check_transaction_status">
+    <schedule_generate_every>240</schedule_generate_every>
+    <schedule_ahead_for>5</schedule_ahead_for>
+    <schedule_lifetime>60</schedule_lifetime>
+    <history_cleanup_every>120</history_cleanup_every>
+    <history_success_lifetime>130</history_success_lifetime>
+    <history_failure_lifetime>140</history_failure_lifetime>
+    <use_separate_process>1</use_separate_process>
+  </group>-->
+</config>

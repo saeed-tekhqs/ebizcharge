@@ -1,0 +1,41 @@
+﻿<!--<style>
+#row_payment_us_ebizcharge_ebizcharge_econnect {
+    background: #fffbbb;
+}
+#row_payment_us_ebizcharge_ebizcharge_synccustomers {
+    background: #fffbbb;
+}
+#row_payment_us_ebizcharge_ebizcharge_syncitems {
+    background: #fffbbb;
+}
+#row_payment_us_ebizcharge_ebizcharge_syncinvoices {
+    background: #fffbbb;
+}
+</style>-->
+<script type="text/javascript">
+    //<![CDATA[
+    function <?php echo $this->getButtonFunction(); ?>_click() {
+        new Ajax.Request('<?php echo $this->getAjaxUrl(); ?>', {
+            method: 'get',
+            onSuccess: function (transport) {
+                //alert(transport.responseText);
+                if (transport.responseText) {
+                    $('messages').update("");
+                    $('messages').update(transport.responseText);
+                } else {
+                    //location.reload();
+                    location = location
+                }
+            },
+            onFailure: function (transport) {
+                var html = '<ul class="messages"><li class="error-msg"><ul><li>Error running request.</li></ul></li></ul>';
+                $('page.messages').update("");
+                $('page.messages').update(html);
+            }
+        });
+    }
+
+    //]]>
+</script>
+
+<?php echo $this->getButtonHtml(); ?>

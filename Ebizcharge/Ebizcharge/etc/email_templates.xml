@@ -1,0 +1,9 @@
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Email:etc/email_templates.xsd">
+	<template id="stock_recurring_item"
+              label="Stock Recurring Item"
+              file="stock_recurring_item.html"
+              type="html"
+              module="Ebizcharge_Ebizcharge"
+              area="frontend"
+    />
+</config>

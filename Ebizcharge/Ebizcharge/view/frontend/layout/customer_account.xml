@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+/**
+* Changes the 'Manage My Payment Methods' link to point to the ListAction controller. 
+*
+* @author      Century Business Solutions <support@centurybizsolutions.com>
+* @copyright   Copyright (c) 2020 Century Business Solutions  (www.centurybizsolutions.com)
+*/
+-->
+<page xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="../../../../../../../lib/internal/Magento/Framework/View/Layout/etc/page_configuration.xsd">
+    <body>
+        <referenceBlock name="customer_account_navigation">
+            <block class="Magento\Framework\View\Element\Html\Link\Current"
+				   ifconfig="payment/ebizcharge_ebizcharge/active"
+				   name="customer-account-navigation-ebizcharge-cards-link">
+                <arguments>
+                    <argument name="path" xsi:type="string">ebizcharge/cards/listaction</argument>
+                    <argument name="label" xsi:type="string" translate="true">Manage My Payment Methods</argument>
+                </arguments>
+            </block>
+			<block class="Ebizcharge\Ebizcharge\Block\Customer\Account\Navigation"
+				   name="customer-account-navigation-ebizcharge-rec-link">
+				<arguments>
+					<argument name="path" xsi:type="string">ebizcharge/recurrings/listaction</argument>
+					<argument name="label" xsi:type="string">Manage Subscriptions</argument>
+				</arguments>
+			</block>
+        </referenceBlock>
+    </body>
+</page>

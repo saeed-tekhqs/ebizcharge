@@ -1,0 +1,23 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * @author Century Business Solutions <support@centurybizsolutions.com>
+ * @copyright Copyright (c) 2021 Century Business Solutions  (www.centurybizsolutions.com)
+ * Created by PhpStorm
+ * User: Mobeen
+ * Date: 6/10/21
+ * Time: 11:22 AM
+ */
+-->
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:Acl/etc/acl.xsd">
+    <acl>
+        <resources>
+            <resource id="Magento_Backend::admin">
+                <resource id="Magento_Backend::content">
+                    <resource id="Ebizcharge_Ebizcharge::rec" title="Manage Ebiz Subscription"/>
+
+                </resource>
+            </resource>
+        </resources>
+    </acl>
+</config>

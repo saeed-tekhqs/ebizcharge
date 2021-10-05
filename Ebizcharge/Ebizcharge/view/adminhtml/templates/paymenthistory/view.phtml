@@ -1,0 +1,79 @@
+<?php echo $block->getGridHtml(); ?>
+<script>
+    require([
+        'jquery'
+    ], function ($) {
+        $(".print-actions").on('change', function(event){
+            let action = $(this).find(':selected').data('action');
+
+            if (action === 'print_receipt') {
+                let tid = $(this).val();
+                let url = '<?php  echo $block->getUrl("ebizcharge_ebizcharge/recurrings/printaction/"); ?>';
+
+                $.ajax({
+                    method: "GET",
+                    url: url + '?tid=' + tid,
+                    data: {form_key: window.FORM_KEY},
+                    dataType: "json",
+                    showLoader: true,
+                    success: function (data) {
+                        if (data.html_data !== undefined) {
+
+                            var newWin = window.open('', '_blank', 'width=400,height=400');
+                            newWin.document.open();
+                            newWin.document.write('<html><body onload="window.print()">' + atob(data.html_data) + '</html>');
+                            newWin.print();
+                            newWin.close();
+                        }
+                    },
+                    error: function (result) {
+                        alert("No response from WSDL");
+                    }
+                });
+            } else if (action === 'print_email') {
+                let tid = $(this).attr('data-refNum');
+                let email = $(this).attr('data-email');
+                let url = '<?php  echo $block->getUrl('ebizcharge_ebizcharge/recurrings/emailaction/'); ?>';
+
+                $.ajax({
+                    method: "GET",
+                    url: url + '?tid=' + tid + '&email=' + email,
+                    data: {form_key: window.FORM_KEY},
+                    dataType: "json",
+                    showLoader: true,
+                    success: function (data) {
+                        if (data.html_data !== undefined) {
+                            location.reload();
+                        }
+                    },
+                    error: function (result) {
+                        alert("No response from WSDL");
+                    }
+                })
+            }
+            return false;
+        });
+
+        $(document).ready(function (){
+
+            // $('.data-grid-filters').remove();
+
+            $('input[name="paymentDate[to]"]').remove();
+
+            // $('.no-changes.admin__control-select').remove();
+
+            $('select[name="limit"]').on('change', function(){
+                $('body').trigger('processStart');
+            });
+
+            $('.action-next').not(".disabled").on('click', function (){
+                $('body').trigger('processStart');
+            });
+
+            $('.action-previous').not(".disabled").on('click', function (){
+                $('body').trigger('processStart');
+            });
+        });
+
+    });
+</script>

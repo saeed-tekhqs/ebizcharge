@@ -1,0 +1,129 @@
+<?php
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+
+// phpcs:disable Magento2.Templates.ThisInTemplate
+// @codingStandardsIgnoreFile
+
+/** @var \Magento\Sales\Block\Order\History $block */
+ $_recurrings = $block->getRecurrings();
+
+$fullUrl = $block->getRequest()->getUriString();
+$baseUrl = $block->getBaseUrl();
+$urlArray = explode($baseUrl, $fullUrl);
+$urlCurrent = 'ebizcharge/recurrings/listaction/';
+
+
+?>
+<?= $block->getChildHtml('info') ?>
+<form class="form" id="reclist"
+      action="<?php echo $block->escapeUrl($block->getUrl('ebizcharge/recurrings/deleteaction')); ?>"
+      method="post">
+    <?php echo $block->getBlockHtml('formkey'); ?>
+
+<?php if ($_recurrings && count($_recurrings)) : ?>
+
+
+    <div class="searchTabCustom">
+        <ul class="items order-links">
+            <li class="nav item current"><strong>Schedule Subscriptions</strong></li>
+            <li class="nav item" onclick="openPage('<?php echo $block->escapeUrl($block->getUrl('ebizcharge/recurrings/historyaction/')); ?>')"><strong>Subscriptions Payment History</strong></li></ul>
+      </div>
+    <br /><br />
+    <div class="clearAll"></div>
+    <div class="searchRowDelCustom">
+        <input type="button" value="Delete Subscription" class="action save primary del_btn"/>
+    </div>
+    <div class="searchRowDelCustom ">
+
+       <input  type="text" name="search"  id="searchIn" value="" placeholder="Search..." class="input-text" maxlength="128" >
+    </div>
+
+        <div class="table-wrapper orders-history clearAll" >
+        <table class="data table table-order-items history" id="myTable">
+            <caption class="table-caption"><?= $block->escapeHtml(__('Subscriptions')) ?></caption>
+            <thead>
+            <tr>
+                <th><?php /* @noEscape */echo __('Select'); ?></th>
+
+                <th scope="col" class="col startdate"><?= $block->escapeHtml(__('Start Date')) ?></th>
+                <th scope="col" class="col enddate"><?= $block->escapeHtml(__('End Date')) ?></th>
+                <th scope="col" class="col total"><?= $block->escapeHtml(__('Amount')) ?></th>
+                <th scope="col" class="col detail"><?= $block->escapeHtml(__('Item Description')) ?></th>
+                <th scope="col" class="col frequency"><?= $block->escapeHtml(__('Frequency')) ?></th>
+                <th scope="col" class="col payment"><?= $block->escapeHtml(__('Payment Method')) ?></th>
+                <th scope="col" class="col status"><?= $block->escapeHtml(__('Status')) ?></th>
+                <th scope="col" class="col actions"><?= $block->escapeHtml(__('Action')) ?></th>
+            </tr>
+            </thead>
+            <tbody id="myBody">
+            <input type="hidden" name="internal_id" id="internal_id">
+            <?php foreach ($_recurrings as $recurring) :
+
+                $start = date("Y-m-d", strtotime($recurring->getData('eb_rec_start_date')));
+                $expire = date("Y-m-d", strtotime($recurring->getData('eb_rec_end_date')));
+
+                if ($recurring->getData('rec_status') == 0) {
+                    $status = 'On';
+                    $class = 'dot_green';
+                } else {
+                    $status = 'Off';
+                    $class = 'dot_red';
+                }
+
+
+                ?>
+                <tr>
+                    <td>
+                        <input type="checkbox" id="checkboxes_id" name="del_id"
+                               class="category_match_to_listing validate-one-required-by-name"
+                               value="<?php echo $recurring['eb_rec_scheduled_payment_internal_id'] ?>">
+                    </td>
+                    <td data-th="<?= $block->escapeHtml(__('Start Date')) ?>" class="col startdate"><?= $block->escapeHtml($start) ?></td>
+                    <td data-th="<?= $block->escapeHtml(__('End Date')) ?>" class="col enddate"><?= $block->escapeHtml($expire) ?></td>
+
+                    <td data-th="<?= $block->escapeHtml(__('Amount')) ?>" class="col total"><?php echo number_format($recurring->getData('amount'), 2) ?></td>
+                    <td data-th="<?= $block->escapeHtml(__('Item Description')) ?>" class="col detail"><?php echo $recurring->getData('mage_item_name'); ?></td>
+                    <td data-th="<?= $block->escapeHtml(__('Frequency')) ?>" class="col frequency"><?php echo ucfirst($recurring->getData('eb_rec_frequency')); ?></td>
+                    <td data-th="<?= $block->escapeHtml(__('Payment Method')) ?>" class="col payment"><?php echo $recurring->getData('payment_method_name'); ?></td>
+                    <td data-th="<?= $block->escapeHtml(__('Status')) ?>" class="col status"><span class="<?php echo $class; ?>"></span><?php echo $status; ?></td>
+                    <td data-th="<?= $block->escapeHtml(__('Actions')) ?>" class="col actions">
+
+                        <a href="<?php echo $this->getUrl('ebizcharge/recurrings/editaction',
+                            ['_secure' => true,
+                                'cid' => $block->getEbzcCustId(),
+                                'mid' => $recurring->getData('eb_rec_scheduled_payment_internal_id')
+                            ]); ?>">
+                            <?php echo __('View/Manage'); ?>
+                        </a>
+
+                        <input name="cid" value="<?php echo $block->getEbzcCustId(); ?>" type="hidden"/>
+                        <input name="mid" type="hidden"
+                               value="<?php echo $recurring->getData('eb_rec_scheduled_payment_internal_id'); ?>"/>
+
+                    </td>
+                </tr>
+            <?php endforeach; ?>
+            </tbody>
+        </table>
+    </div>
+
+    <?php if ($block->getPagerHtml()) : ?>
+        <div class="order-products-toolbar toolbar bottom"><?= $block->getPagerHtml() ?></div>
+    <?php endif ?>
+<?php else : ?>
+    <div class="message info empty"><span><?= $block->escapeHtml($block->getEmptyOrdersMessage()) ?></span></div>
+<?php endif ?>
+</form>
+<div id="myModel"></div>
+<div id="myModelConfirm"></div>
+
+<script type="text/x-magento-init">
+    {
+        "*": {
+            "Ebizcharge_Ebizcharge/js/recurring_search" : {}
+        }
+    }
+</script>

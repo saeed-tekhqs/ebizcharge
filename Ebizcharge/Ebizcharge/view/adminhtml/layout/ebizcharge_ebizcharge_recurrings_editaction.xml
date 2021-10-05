@@ -1,0 +1,24 @@
+<?xml version="1.0"?>
+<!--
+/**
+* Declares the block and sets the template for the Cards/ListAction controller.
+*
+* @author      Century Business Solutions <support@centurybizsolutions.com>
+* @copyright   Copyright (c) 2020 Century Business Solutions  (www.centurybizsolutions.com)
+
+The name of this file uses the following pattern: routeId_controller_action.xml rizwan
+*/
+-->
+
+<page xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/page_configuration.xsd">
+    <referenceBlock name="page.title">
+        <action method="setPageTitle">
+            <argument name="title" xsi:type="string">Manage Subscription</argument>
+        </action>
+    </referenceBlock>
+    <body>
+        <referenceContainer name="content">
+            <block class="Ebizcharge\Ebizcharge\Block\Admin\RecurringsAdmin" name="ebizcharge.recurrings.update" template="Ebizcharge_Ebizcharge::edit_recurrings.phtml"/>
+        </referenceContainer>
+    </body>
+</page>
